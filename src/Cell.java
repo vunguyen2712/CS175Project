@@ -10,16 +10,46 @@ public class Cell {
 	private int[] coordinates;
 	private int importance; //1,2,3 - symbolizes if entrance, exit, or reward is in this cell 
 	
-	public Cell(ArrayList<Cell> neighbors, int x, int y, int importance)
+	public Cell(int x, int y)
 	{
 		occupied = false;
-		this.neighbors = neighbors;
 		coordinates = new int[2];
 		coordinates[0] = x;
 		coordinates[1] = y;
+	}
+	
+	public void setNeighbors(ArrayList<Cell> neighbors)
+	{
+		this.neighbors = neighbors;
+	}
+	
+	public void setEntrance(Agent agent)
+	{
+		occupied = true;
+		creatureInCell = agent;
+		setImportance(1);
+	}
+	
+	public void setExit()
+	{
+		setImportance(2);
+	}
+	
+	private void setImportance(int importance)
+	{
 		this.importance = importance;
 	}
 	
+	public void moveCreatureOutOfCell()
+	{
+		occupied = false;
+	}
+	
+	public void moveCreatureIntoCell(Moveable creature)
+	{
+		occupied = true;
+		creatureInCell = creature;
+	}
 	public boolean isOccupied()
 	{
 		return occupied;
