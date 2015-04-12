@@ -9,6 +9,8 @@ public class Cell {
 	private ArrayList<Cell> neighbors;
 	private int[] coordinates;
 	private int importance; //1,2,3 - symbolizes if entrance, exit, or reward is in this cell 
+	private boolean visited;
+	private ArrayList<Cell> neighborsIVisited;
 	
 	public Cell(int x, int y)
 	{
@@ -16,6 +18,8 @@ public class Cell {
 		coordinates = new int[2];
 		coordinates[0] = x;
 		coordinates[1] = y;
+		visited = false;
+		neighborsIVisited = new ArrayList<Cell>();
 	}
 	
 	public void setNeighbors(ArrayList<Cell> neighbors)
@@ -75,4 +79,23 @@ public class Cell {
 		return importance;
 	}
 	
+	public void visit()
+	{
+		visited = true;
+	}
+	
+	public boolean visited()
+	{
+		return visited;
+	}
+	
+	public void visitNeighbor(Cell neighbor)
+	{
+		neighborsIVisited.add(neighbor);
+	}
+	
+	public ArrayList<Cell> getVisitedNeighbors()
+	{
+		return neighborsIVisited;
+	}
 }
