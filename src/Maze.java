@@ -66,34 +66,27 @@ public class Maze {
 		{
 			for(int j = 0; j <mazeHeight;j++)
 			{
-				Cell[] neighbors = {maze[i-1][j], maze[i+1][j], maze[i][j-1], maze[i][j+1]};
+				//ArrayList<> neighbors = {maze[i-1][j], maze[i+1][j], maze[i][j-1], maze[i][j+1]};
+				ArrayList<Cell> neighbors = new ArrayList<Cell>();
 				
-				if(i==0)
+				if(!(i==0))
 				{
-					neighbors[0] = null;
+					neighbors.add(maze[i-1][j]);
 				}
-				if(i==(mazeWidth-1))
+				if(!(i==(mazeWidth-1)))
 				{
-					neighbors[1] = null;
+					neighbors.add(maze[i+1][j]);
 				}
-				if(j == 0)
+				if(!(j == 0))
 				{
-					neighbors[2] = null;
+					neighbors.add(maze[i][j-1]);
 				}
-				if(i==(mazeHeight-1))
+				if(!(j==(mazeHeight-1)))
 				{
-					neighbors[3] = null;
+					neighbors.add(maze[i][j+1]);
 				}
 				
-				ArrayList<Cell> finalNeighbors = new ArrayList<Cell>();
-				for (int k = 0; k < 4; k++)
-				{
-					if(!(neighbors[k] == null))
-					{
-						finalNeighbors.add(neighbors[k]);
-					}
-				}
-				maze[i][j].setNeighbors(finalNeighbors);
+				maze[i][j].setNeighbors(neighbors);
 			}
 		}
 		
