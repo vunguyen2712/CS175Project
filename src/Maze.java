@@ -13,6 +13,27 @@ public class Maze {
 		//Initialize and call the big method
 		maze = new Cell[mazeWidth][mazeHeight];
 		generateMaze(mazeWidth, mazeHeight);
+		
+		/*for (int i = 0; i< mazeWidth; i++)
+		{
+			for(int j = 0; j < mazeHeight; j++)
+			{
+				Cell tempCell = maze[i][j];
+				int[] coords = tempCell.getCoordinates();
+				int x = coords[0];
+				int y = coords[1];
+				System.out.print("(" + x + "," + y + ") - ");
+				System.out.println(tempCell.getNeighbors().size());
+				/*for(int k =0; k<tempCell.getNeighbors().size(); i++)
+				{
+					Cell neighborCell = tempCell.getNeighbors().get(k);
+					int[] coords = neighborCell.getCoordinates();
+					int x = coords[0];
+					int y = coords[1];
+					System.out.println("(" + x + "," + y + ")");
+				}
+			}
+		}*/
 	}
 	
 	private void generateMaze(int mazeWidth, int mazeHeight)
@@ -186,18 +207,38 @@ public class Maze {
 	 */
 	private void createMaze(Cell currentCell)
 	{
-		for(int i = 0; i< currentCell.getNeighbors().size(); i++)
+		//Fix this, make it a random neighboring cell
+		boolean allVisited = false;
+		
+		while(!allVisited)
 		{
+			Random random = new Random();
+			int i = random.nextInt(currentCell.getNeighbors().size());
 			Cell neighbor = currentCell.getNeighbors().get(i);
+			
 			if(!neighbor.visited())
 			{
-				neighbor.visit();
 				neighbor.visitNeighbor(currentCell);
 				currentCell.visitNeighbor(neighbor);
 				createMaze(neighbor);
 			}
+			
+			if(currentCell.getNumberOfVisitedNeighbors() == currentCell.getNeighbors().size())
+			{
+				allVisited = true;
+			}
 		}
 
 		currentCell.setNeighbors(currentCell.getVisitedNeighbors());
+	}
+	
+	public Cell getEntrance()
+	{
+		return entrance;
+	}
+	
+	public Cell getExit()
+	{
+		return exit;
 	}
 }

@@ -92,10 +92,26 @@ public class Cell {
 	public void visitNeighbor(Cell neighbor)
 	{
 		neighborsIVisited.add(neighbor);
+		neighbor.visit();
 	}
 	
 	public ArrayList<Cell> getVisitedNeighbors()
 	{
 		return neighborsIVisited;
+	}
+	
+	public int getNumberOfVisitedNeighbors()
+	{
+		int numberOfVisitedNeighbors = 0;
+		
+		for(int i = 0; i < neighbors.size(); i++)
+		{
+			if(neighbors.get(i).visited())
+			{
+				numberOfVisitedNeighbors++;
+			}
+		}
+		
+		return numberOfVisitedNeighbors;
 	}
 }
