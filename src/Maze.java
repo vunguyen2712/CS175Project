@@ -241,4 +241,8 @@ public class Maze {
 	{
 		return exit;
 	}
+	
+	public Cell[][] getMaze(){
+		return maze;
+	}
 }
