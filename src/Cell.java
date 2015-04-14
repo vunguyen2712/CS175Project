@@ -114,4 +114,44 @@ public class Cell {
 		
 		return numberOfVisitedNeighbors;
 	}
+	
+	public boolean hasWestNeighbor(){
+		for(Cell n : neighbors){
+			int[] neighborC = n.getCoordinates();
+			if(neighborC[0] == coordinates[0]-1 && neighborC[1] == coordinates[1]){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasNorthNeighbor(){
+		for(Cell n : neighbors){
+			int[] neighborC = n.getCoordinates();
+			if(neighborC[0] == coordinates[0] && neighborC[1]-1 == coordinates[1]){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasEastNeighbor(){
+		for(Cell n : neighbors){
+			int[] neighborC = n.getCoordinates();
+			if(neighborC[0] == coordinates[0]+1 && neighborC[1] == coordinates[1]){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasSouthNeighbor(){
+		for(Cell n : neighbors){
+			int[] neighborC = n.getCoordinates();
+			if(neighborC[0] == coordinates[0] && neighborC[1]+1 == coordinates[1]){
+				return true;
+			}
+		}
+		return false;
+	}
 }
