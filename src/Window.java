@@ -50,6 +50,15 @@ public class Window {
 			for(int i = 0; i < width; i++){
 	        	for(int j = 0; j < height; j++){
 	        		Cell c = maze.getMaze()[j][i];
+	        		if(c == maze.getEntrance()){
+	        			g2d.setColor(Color.GREEN);
+	        			g2d.fillRect(x, y, cellSize, cellSize);
+	        		}
+	        		else if(c == maze.getExit()){
+	        			g2d.setColor(Color.RED);
+	        			g2d.fillRect(x, y, cellSize, cellSize);
+	        		}
+	        		g2d.setColor(Color.BLACK);
 	        		if(!c.hasNorthNeighbor())
 	        			g2d.drawLine(x, y, x+cellSize, y);
 	        		if(!c.hasWestNeighbor())
