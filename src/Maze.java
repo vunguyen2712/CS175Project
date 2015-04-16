@@ -14,7 +14,12 @@ public class Maze {
 		maze = new Cell[mazeWidth][mazeHeight];
 		generateMaze(mazeWidth, mazeHeight);
 		
-		/*for (int i = 0; i< mazeWidth; i++)
+		/*int[] encoords = entrance.getCoordinates();
+		int enx = encoords[0];
+		int eny = encoords[1];
+		System.out.println("Entrance Coords - (" + enx + "," + eny + ")");*/
+		//System.out.println(exit.getCoordinates() + "/n");
+		for (int i = 0; i< mazeWidth; i++)
 		{
 			for(int j = 0; j < mazeHeight; j++)
 			{
@@ -22,18 +27,18 @@ public class Maze {
 				int[] coords = tempCell.getCoordinates();
 				int x = coords[0];
 				int y = coords[1];
-				System.out.print("(" + x + "," + y + ") - ");
-				System.out.println(tempCell.getNeighbors().size());
-				/*for(int k =0; k<tempCell.getNeighbors().size(); i++)
+				System.out.print("Cell (" + x + "," + y + ") Has - ");
+				System.out.println(tempCell.getNeighbors().size() + " neighbors, listed below -");
+				for(int k =0; k<tempCell.getNeighbors().size(); k++)
 				{
 					Cell neighborCell = tempCell.getNeighbors().get(k);
-					int[] coords = neighborCell.getCoordinates();
-					int x = coords[0];
-					int y = coords[1];
+					coords = neighborCell.getCoordinates();
+					x= coords[0];
+					y = coords[1];
 					System.out.println("(" + x + "," + y + ")");
 				}
 			}
-		}*/
+		}
 	}
 	
 	private void generateMaze(int mazeWidth, int mazeHeight)
