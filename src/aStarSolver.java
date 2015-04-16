@@ -199,8 +199,6 @@ public class Maze {
         StdDraw.show(1000);
     }
     
-    //below this line is Adick
-    
     double distBetween (State currentState, State neighbor){
 		return Math.abs(currentState.agent_x - neighbor.agent_x)
 				+ Math.abs(currentState.agent_y - neighbor.agent_y);
