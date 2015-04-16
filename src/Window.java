@@ -49,7 +49,7 @@ public class Window {
 			Graphics2D g2d = (Graphics2D) g;
 			for(int i = 0; i < width; i++){
 	        	for(int j = 0; j < height; j++){
-	        		Cell c = maze.getMaze()[i][j];
+	        		Cell c = maze.getMaze()[j][i];
 	        		if(!c.hasNorthNeighbor())
 	        			g2d.drawLine(x, y, x+cellSize, y);
 	        		if(!c.hasWestNeighbor())
