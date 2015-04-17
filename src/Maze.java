@@ -7,11 +7,13 @@ public class Maze {
 	private Cell[][] maze;
 	private Cell entrance;
 	private Cell exit;
+	private ArrayList<Monster> monsters;
 	
 	public Maze(int mazeWidth, int mazeHeight)
 	{
 		//Initialize and call the big method
 		maze = new Cell[mazeWidth][mazeHeight];
+		monsters = new ArrayList<Monster>();
 		generateMaze(mazeWidth, mazeHeight);
 		
 		/*int[] encoords = entrance.getCoordinates();
@@ -121,6 +123,8 @@ public class Maze {
 		exit = createExit(mazeHeight, mazeWidth, endSide, endOffset);
 		
 		createMaze(entrance);
+		
+		setMonsters(mazeWidth, mazeHeight);
 	}
 	
 	private int getSide()
@@ -237,6 +241,30 @@ public class Maze {
 		currentCell.setNeighbors(currentCell.getVisitedNeighbors());
 	}
 	
+	public void setMonsters(int mazeWidth, int mazeHeight)
+	{
+		int max;
+		if(mazeWidth <= mazeHeight)
+		{
+			max = mazeWidth;
+		}
+		else
+		{
+			max = mazeHeight;
+		}
+		
+		Random random = new Random();
+		
+		
+		for (int i = 0; i< max/4; i++)
+		{
+			int randomX = random.nextInt(mazeWidth);
+			int randomY = random.nextInt(mazeHeight);
+			monsters.add(new Monster(randomX, randomY));
+		}
+		
+	}
+	
 	public Cell getEntrance()
 	{
 		return entrance;
@@ -249,5 +277,10 @@ public class Maze {
 	
 	public Cell[][] getMaze(){
 		return maze;
+	}
+	
+	public ArrayList<Monster> getMonsters()
+	{
+		return monsters;
 	}
 }

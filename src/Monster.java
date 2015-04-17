@@ -4,9 +4,10 @@ public class Monster extends Moveable{
 	private int currentX;
 	private int currentY;
 	
-	public Monster()
+	public Monster(int startingX, int startingY)
 	{
-		//either create a random starting location here, or have it inputed as parameters
+		currentX = startingX;
+		currentY = startingY;
 	}
 	
 	@Override
@@ -23,11 +24,11 @@ public class Monster extends Moveable{
 	
 	public int getX()
 	{
-		throw new RuntimeException("Implement This");
+		return currentX;
 	}
 	public int getY()
 	{
-		throw new RuntimeException("Implement This");
+		return currentY;
 	}
 	
 }
