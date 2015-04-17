@@ -21,7 +21,7 @@ public class Maze {
 		int eny = encoords[1];
 		System.out.println("Entrance Coords - (" + enx + "," + eny + ")");*/
 		//System.out.println(exit.getCoordinates() + "/n");
-		for (int i = 0; i< mazeWidth; i++)
+		/*for (int i = 0; i< mazeWidth; i++)
 		{
 			for(int j = 0; j < mazeHeight; j++)
 			{
@@ -40,6 +40,13 @@ public class Maze {
 					System.out.println("(" + x + "," + y + ")");
 				}
 			}
+		}*/
+		for (int m = 0; m < monsters.size(); m++)
+		{
+			int x = monsters.get(m).getX();
+			int y = monsters.get(m).getY();
+			
+			System.out.println("(" + x + "," + y + ")");
 		}
 	}
 	
@@ -260,7 +267,9 @@ public class Maze {
 		{
 			int randomX = random.nextInt(mazeWidth);
 			int randomY = random.nextInt(mazeHeight);
-			monsters.add(new Monster(randomX, randomY));
+			Monster temp = new Monster(randomX,randomY);
+			monsters.add(temp);
+			maze[randomX][randomY].moveCreatureIntoCell(temp);
 		}
 		
 	}
