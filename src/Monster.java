@@ -1,34 +1,44 @@
+import java.util.Random;
+
 
 public class Monster extends Moveable{
 
-	private int currentX;
-	private int currentY;
+	private Cell currentCell;
+	private Cell nextCell;
 	
-	public Monster(int startingX, int startingY)
+	public Monster(Cell startingCell)
 	{
-		currentX = startingX;
-		currentY = startingY;
+		currentCell = startingCell;
+		currentCell.moveCreatureIntoCell(this);
 	}
 	
 	@Override
 	public void move() {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("Implement This");
+		//move out of currentCell
+		//move into nextCell
+		
+		currentCell.moveCreatureOutOfCell();
+		nextCell.moveCreatureIntoCell(this);
+		currentCell = nextCell;
 	}
 
 	@Override
-	public int calculateNextMove() {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("Implement This");
+	public void calculateNextMove() {
+		Random random = new Random();
+		int newCell = random.nextInt(currentCell.getNeighbors().size());
+		
+		nextCell = currentCell.getSpecificNeighbor(newCell);
+		//nextCell.printCoords();
 	}
 	
 	public int getX()
 	{
-		return currentX;
+		return currentCell.getCoordinates()[0];
 	}
 	public int getY()
 	{
-		return currentY;
+		return currentCell.getCoordinates()[1];
 	}
 	
 }

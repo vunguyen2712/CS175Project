@@ -8,6 +8,7 @@ public class Maze {
 	private Cell entrance;
 	private Cell exit;
 	private ArrayList<Monster> monsters;
+	private Agent agent;
 	
 	public Maze(int mazeWidth, int mazeHeight)
 	{
@@ -41,13 +42,13 @@ public class Maze {
 				}
 			}
 		}*/
-		for (int m = 0; m < monsters.size(); m++)
+		/*for (int m = 0; m < monsters.size(); m++)
 		{
 			int x = monsters.get(m).getX();
 			int y = monsters.get(m).getY();
 			
 			System.out.println("(" + x + "," + y + ")");
-		}
+		}*/
 	}
 	
 	private void generateMaze(int mazeWidth, int mazeHeight)
@@ -125,13 +126,15 @@ public class Maze {
 			}
 		}
 		
-		entrance = createEntrance(mazeHeight, mazeWidth, startSide, startOffset);
-		
 		exit = createExit(mazeHeight, mazeWidth, endSide, endOffset);
 		
+		entrance = createEntrance(mazeHeight, mazeWidth, startSide, startOffset);
+
 		createMaze(entrance);
 		
+		//Create the monsters and agent
 		setMonsters(mazeWidth, mazeHeight);
+		agent = new Agent(entrance, exit);
 	}
 	
 	private int getSide()
@@ -148,33 +151,32 @@ public class Maze {
 	
 	private Cell createEntrance(int mazeHeight, int mazeWidth, int startSide, int startOffset)
 	{
-		Agent agent;
 		//Create the entrance. Create the Agent as well so that we can link to it in the Entrance Cell
 		if(startSide == 0)
 		{
 			//Bottom
-			agent = new Agent(startOffset,0);
+			//agent = new Agent(maze[startOffset][0], exit);
 			maze[startOffset][0].setEntrance(agent);
 			return maze[startOffset][0];
 		}
 		else if (startSide == 1)
 		{
 			//Left
-			agent = new Agent(0,startOffset);
+			//agent = new Agent(maze[0][startOffset], exit);
 			maze[0][startOffset].setEntrance(agent);
 			return maze[0][startOffset];
 		}
 		else if (startSide == 2)
 		{
 			//Top
-			agent = new Agent(mazeHeight-1, startOffset);
+			//agent = new Agent(maze[mazeHeight-1][startOffset], exit);
 			maze[mazeHeight-1][startOffset].setEntrance(agent);
 			return maze[mazeHeight-1][startOffset];
 		}
 		else 
 		{
 			//Right
-			agent = new Agent(startOffset, mazeWidth);
+			//agent = new Agent(maze[startOffset][mazeWidth-1], exit);
 			maze[startOffset][mazeWidth-1].setEntrance(agent);
 			return maze[startOffset][mazeWidth-1];
 		}
@@ -267,7 +269,7 @@ public class Maze {
 		{
 			int randomX = random.nextInt(mazeWidth);
 			int randomY = random.nextInt(mazeHeight);
-			Monster temp = new Monster(randomX,randomY);
+			Monster temp = new Monster(maze[randomX][randomY]);
 			monsters.add(temp);
 			maze[randomX][randomY].moveCreatureIntoCell(temp);
 		}
@@ -291,5 +293,23 @@ public class Maze {
 	public ArrayList<Monster> getMonsters()
 	{
 		return monsters;
+	}
+	
+	public void calculateNextMove()
+	{
+		agent.calculateNextMove();
+		for (Monster m : monsters)
+		{
+			m.calculateNextMove();
+		}
+	}
+	
+	public void moveAll()
+	{
+		agent.move();
+		for(Monster m : monsters)
+		{
+			m.move();
+		}
 	}
 }

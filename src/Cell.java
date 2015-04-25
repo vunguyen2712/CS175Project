@@ -11,6 +11,7 @@ public class Cell {
 	private int importance; //1,2,3 - symbolizes if entrance, exit, or reward is in this cell 
 	private boolean visited;
 	private ArrayList<Cell> neighborsIVisited;
+	private boolean aStarVisited;
 	
 	public Cell(int x, int y)
 	{
@@ -20,6 +21,7 @@ public class Cell {
 		coordinates[1] = y;
 		visited = false;
 		neighborsIVisited = new ArrayList<Cell>();
+		aStarVisited = false;
 	}
 	
 	public void setNeighbors(ArrayList<Cell> neighbors)
@@ -39,7 +41,7 @@ public class Cell {
 		setImportance(2);
 	}
 	
-	private void setImportance(int importance)
+	public void setImportance(int importance)
 	{
 		this.importance = importance;
 	}
@@ -84,6 +86,11 @@ public class Cell {
 		visited = true;
 	}
 	
+	public void aStarVisit()
+	{
+		aStarVisited = true;
+	}
+	
 	public boolean visited()
 	{
 		return visited;
@@ -98,6 +105,11 @@ public class Cell {
 	public ArrayList<Cell> getVisitedNeighbors()
 	{
 		return neighborsIVisited;
+	}
+	
+	public boolean aStarVisited()
+	{
+		return aStarVisited;
 	}
 	
 	public int getNumberOfVisitedNeighbors()
@@ -153,5 +165,34 @@ public class Cell {
 			}
 		}
 		return false;
+	}
+	
+	public String printCoords()
+	{
+		
+		return "(" + coordinates[0] + "," + coordinates[1] + ")";
+	}
+	
+	public void printCoords1()
+	{
+		System.out.println("(" + coordinates[0] + "," + coordinates[1] + ")");
+	}
+	
+	
+	public Cell getSpecificNeighbor(int cellNumber)
+	{
+		return neighbors.get(cellNumber);
+	}
+	
+	public boolean equals(Cell c)
+	{
+		if(getCoordinates()[0] == c.getCoordinates()[0] && getCoordinates()[1] == c.getCoordinates()[1])
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

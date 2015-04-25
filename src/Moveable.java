@@ -3,6 +3,6 @@ public abstract class Moveable {
 	
 	public abstract void move();
 	
-	public abstract int calculateNextMove();
+	public abstract void calculateNextMove();
 	
 }

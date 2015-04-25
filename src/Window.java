@@ -14,35 +14,26 @@ public class Window {
 	private Maze maze;
 	private int width;
 	private int height;
+	private final int cellSize = 50;
+	private int x = cellSize;
+	private int y = cellSize;
 	
-	private final int windowSize = 800;
-	private int cellSize;
-	private int x;
-	private int y;
-	
-	private boolean inbetween;
-	
-	public Window(Maze maze)
+	public Window()
 	{
-		this.maze = maze;
-		width = maze.getMaze().length;
-		height = maze.getMaze()[0].length;
-		cellSize = windowSize/(Math.max(width, height)+2);
-		x = cellSize;
-		y = cellSize;
-		
 		frame = new JFrame("Maze Solver");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setBackground(Color.WHITE);
-		frame.setSize(windowSize+cellSize/2, windowSize+2*cellSize);
-		b = new BufferedImage(windowSize+cellSize/2, windowSize+2*cellSize, BufferedImage.TYPE_INT_ARGB);
 		
 		panel = new Panel();
 	}
 	
-	public void render(boolean inbetween)
+	public void render(Maze maze)
 	{
-		this.inbetween = inbetween;
+		this.maze = maze;
+		width = maze.getMaze().length;
+		height = maze.getMaze()[0].length;
+		frame.setBounds(0, 0, (width+2)*cellSize, (height+2)*cellSize);
+		b = new BufferedImage((width+2)*cellSize, (height+2)*cellSize, BufferedImage.TYPE_INT_ARGB);
 		g = b.createGraphics();
 		g.setColor(Color.BLACK);
 		
@@ -55,12 +46,10 @@ public class Window {
 		
 		@Override
 		public void paint(Graphics g){
-			
 			Graphics2D g2d = (Graphics2D) g;
-			for(int i = 0; i < height; i++){
-	        	for(int j = 0; j < width; j++){
+			for(int i = 0; i < width; i++){
+	        	for(int j = 0; j < height; j++){
 	        		Cell c = maze.getMaze()[j][i];
-	        		
 	        		if(c == maze.getEntrance()){
 	        			g2d.setColor(Color.GREEN);
 	        			g2d.fillRect(x, y, cellSize, cellSize);
@@ -69,20 +58,19 @@ public class Window {
 	        			g2d.setColor(Color.RED);
 	        			g2d.fillRect(x, y, cellSize, cellSize);
 	        		}
-	        		if(c.isOccupied()){//brown if monster, orange if agent 
-	        			if(c.getCreature() instanceof Agent){
-	        				g2d.setColor(Color.ORANGE);
+	        		else if(c.isOccupied())
+	        		{
+	        			if(c.getCreature() instanceof Monster)
+	        			{
+	        				g2d.setColor(Color.YELLOW);
+	        				g2d.fillRect(x, y, cellSize, cellSize);
 	        			}
-	        			else{
-	        				g2d.setColor(new Color(0x7E6335));
+	        			else if(c.getCreature() instanceof Agent)
+	        			{
+	        				g2d.setColor(Color.BLUE);
+	        				g2d.fillRect(x, y, cellSize, cellSize);
 	        			}
-	        			g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
 	        		}
-	        		if(c.isImportant() == 3){//yellow circle outline if reward
-	        			g2d.setColor(Color.YELLOW);
-	        			g2d.drawOval(x, y, cellSize, cellSize);
-	        		}
-	        		
 	        		g2d.setColor(Color.BLACK);
 	        		if(!c.hasNorthNeighbor())
 	        			g2d.drawLine(x, y, x+cellSize, y);
@@ -92,7 +80,11 @@ public class Window {
 	        			g2d.drawLine(x+cellSize, y, x+cellSize, y+cellSize);
 	        		if(!c.hasSouthNeighbor())
 	        			g2d.drawLine(x, y+cellSize, x+cellSize, y+cellSize);
+	        		
+	        		//g2d.drawString(c.printCoords(), x, y);
 	        		x += cellSize;
+	        		
+
 	        	}
 	        	x = cellSize;
 	        	y += cellSize;
