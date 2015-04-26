@@ -6,7 +6,7 @@ public class MazeSolver {
 		Maze maze = new Maze(40, 40);
 		Window window = new Window(maze);
 		window.render(false);
-		//while(!done)
+//		while(!done)
 		
 		//Calculate where to go next
 		//Move

@@ -1,5 +1,3 @@
-package test;
-
 public class State {
 	public int agent_x;
 	public int agent_y;
