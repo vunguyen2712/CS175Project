@@ -13,6 +13,9 @@ public class MazeSolver {
 		//Scanner sc = new Scanner(System.in);
 		//sc.nextLine();
 		
+		//Calculate the path to the exit
+		Agent agent = maze.getAgent();
+		agent.calculatePathThroughMaze();
 		//Game loop, done is set to true when exit is reachd
 		while(!done)
 		{
