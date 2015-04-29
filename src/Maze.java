@@ -1,3 +1,5 @@
+package src;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -323,12 +325,46 @@ public class Maze {
 		return agent;
 	}
 		
+	public boolean monstersCollision(Cell nextCell, int monPos)
+	{
+		for (int i = 0; i < monPos; ++i)
+		{
+			if (monsters.get(i).getNextCell().equals(nextCell))
+			{
+				return true;
+			}
+		
+		}
+		return false;
+	}
+	 
 	public void calculateNextMove()
 	{
 		agent.calculateNextMove();
-		for (Monster m : monsters)
+		
+		for (int i = 0; i < monsters.size(); ++i)
 		{
-			m.calculateNextMove();
+			Cell movedToCell = monsters.get(i).calculateNextMove();
+			// check if there is no collision in next move
+			int recalTimes = 0;  // used to check for trap
+			while (monstersCollision(movedToCell,i))
+			{
+				movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random postion
+				++ recalTimes;
+				System.out.println("monster collision");
+				if (recalTimes > 3) // if encounter a trap
+				{
+					// recalculate next postion for all monsters
+					for (int j = 0; j < i; ++j)
+					{
+						monsters.get(j).calculateNextMove();
+					}
+					movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random postion
+					recalTimes = 0;
+					System.out.println("recalculated all next move for monsters!");
+				}
+			}
+			System.out.println("monster new postion!");
 		}
 	}
 	

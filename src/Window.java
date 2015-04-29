@@ -1,3 +1,5 @@
+package src;
+
 import java.awt.*;
 import java.awt.image.*;
 import java.util.ArrayList;

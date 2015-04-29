@@ -1,3 +1,5 @@
+package src;
+
 import java.util.Random;
 
 
@@ -24,11 +26,12 @@ public class Monster extends Moveable{
 	}
 
 	@Override
-	public void calculateNextMove() {
+	public Cell calculateNextMove() {
 		Random random = new Random();
 		int newCell = random.nextInt(currentCell.getNeighbors().size());
 		
 		nextCell = currentCell.getSpecificNeighbor(newCell);
+		return nextCell;
 		//nextCell.printCoords();
 	}
 	
@@ -39,6 +42,14 @@ public class Monster extends Moveable{
 	public int getY()
 	{
 		return currentCell.getCoordinates()[1];
+	}
+	public Cell getCurrentCell()
+	{
+		return currentCell;
+	}
+	public Cell getNextCell()
+	{
+		return nextCell;
 	}
 	
 }

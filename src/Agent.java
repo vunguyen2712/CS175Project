@@ -1,3 +1,6 @@
+package src;
+
+
 import java.util.ArrayList;
 import java.util.Stack;
  
@@ -74,7 +77,7 @@ import java.util.Stack;
 +	}*/
 	
  	@Override
-	public void calculateNextMove() 
+	public Cell calculateNextMove() 
 	{
 		//To detect if the agent will move to a cell with a monster on it, check if the nextCell has a 
 		//monster in it
@@ -84,6 +87,7 @@ import java.util.Stack;
 		
 		//if(nextCell.stillHasMonster()
 			//moveBackOneCell ----- To avoid the monster
+		return nextCell;
 		
 	}
 	
@@ -184,8 +188,11 @@ import java.util.Stack;
 				tempCell = tempCell.getParentCell();
 				}
 				path.push(entrance.getCell());
+				System.out.println("Path found!");
 			}
+			System.out.println("Path NOT found! Keep Trying!");
 		}
+		
 	}
 	
 	private int calculateCellDistance(Cell c)
