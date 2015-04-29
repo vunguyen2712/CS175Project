@@ -145,8 +145,8 @@ public class Maze {
 		createMaze(entrance, maxCycles, 0, 0);
 		
 		//Create the monsters and agent
-//		setMonsters(mazeWidth, mazeHeight);
-		setMonsters(40, 40);
+		setMonsters(mazeWidth, mazeHeight);
+//		setMonsters(40, 40);
 		agent = new Agent(entrance, exit);
 	}
 	
@@ -291,10 +291,10 @@ public class Maze {
 		
 		for (int i = 0; i< max/4; i++)
 		{
-//			int randomX = random.nextInt(mazeWidth);
-//			int randomY = random.nextInt(mazeHeight);
-			int randomX = random.nextInt(10);
-			int randomY = random.nextInt(10);
+			int randomX = random.nextInt(mazeWidth);
+			int randomY = random.nextInt(mazeHeight);
+//			int randomX = random.nextInt(10);
+//			int randomY = random.nextInt(10);
 			
 			Monster temp = new Monster(maze[randomX][randomY]);
 			monsters.add(temp);
