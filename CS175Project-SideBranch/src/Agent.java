@@ -35,7 +35,7 @@ public class Agent extends Moveable{
 	}
 
 	@Override
-	public void calculateNextMove() {
+	public Cell calculateNextMove() {
 		//For each unvisited neighbor, calculate the distance to the goal node
 		//For now, the cost to go to that node is constant
 		//Take the path with the samllest value
@@ -66,6 +66,7 @@ public class Agent extends Moveable{
 		
 		nextCell = minCell;
 		visitedCells.push(nextCell);
+		return nextCell;
 	}
 	
 	private int manhattanDistance(Cell c)
