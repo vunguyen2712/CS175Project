@@ -323,6 +323,7 @@ public class Maze {
 	}
 	
 <<<<<<< HEAD:CS175Project-SideBranch/src/Maze.java
+<<<<<<< HEAD:CS175Project-SideBranch/src/Maze.java
 	public boolean monstersCollision(Cell nextCell, int monPos)
 	{
 		for (int i = 0; i < monPos; ++i)
@@ -338,6 +339,13 @@ public class Maze {
 	 
 =======
 >>>>>>> parent of e364e08... AStar now calculates path at the beginning:src/Maze.java
+=======
+	public Agent getAgent()
+	{
+		return agent;
+	}
+	
+>>>>>>> parent of 08137cc... Revert "AStar now calculates path at the beginning":src/Maze.java
 	public void calculateNextMove()
 	{
 		agent.calculateNextMove();
