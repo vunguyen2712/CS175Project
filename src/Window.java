@@ -81,7 +81,7 @@ public class Window {
 	        		if(!c.hasSouthNeighbor())
 	        			g2d.drawLine(x, y+cellSize, x+cellSize, y+cellSize);
 	        		
-	        		//g2d.drawString(c.printCoords(), x, y);
+	        		g2d.drawString(c.printCoords(), x, y);
 	        		x += cellSize;
 	        		
 

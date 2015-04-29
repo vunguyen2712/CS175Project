@@ -318,6 +318,11 @@ public class Maze {
 		return monsters;
 	}
 	
+	public Agent getAgent()
+	{
+		return agent;
+	}
+	
 	public void calculateNextMove()
 	{
 		agent.calculateNextMove();
