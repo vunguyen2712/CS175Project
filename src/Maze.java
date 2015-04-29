@@ -61,18 +61,6 @@ public class Maze {
 		
 		//The Offset is the x or y value of the start/end, depending if it on the left/right or top/bottom
 		int startOffset;
-		int maxCycles;
-		int amountOfCyclesInMaze = 0;
-		
-		if(mazeWidth <= mazeHeight)
-		{
-			maxCycles = mazeWidth/2;
-		}
-		else
-		{
-			maxCycles = mazeHeight/2;
-		}
-		
 		//Start on the left or right side of the maze
 		if(startSide == 1 || startSide == 3)
 		{
@@ -142,7 +130,7 @@ public class Maze {
 		
 		entrance = createEntrance(mazeHeight, mazeWidth, startSide, startOffset);
 
-		createMaze(entrance, maxCycles, 0, 0);
+		createMaze(entrance);
 		
 		//Create the monsters and agent
 		setMonsters(mazeWidth, mazeHeight);
@@ -235,11 +223,10 @@ public class Maze {
 	 * 6) Once finished with each unvisited neighbor, set the list of neighbors (available cells to move to)
 	 * as the list of neighbors the currentCell visited
 	 */
-	private void createMaze(Cell currentCell, int maxCycles, int amountOfCyclesInMaze, int amountOfStepsSinceLastCycle)
+	private void createMaze(Cell currentCell)
 	{
 		//Fix this, make it a random neighboring cell
 		boolean allVisited = false;
-
 		
 		while(!allVisited)
 		{
@@ -251,17 +238,7 @@ public class Maze {
 			{
 				neighbor.visitNeighbor(currentCell);
 				currentCell.visitNeighbor(neighbor);
-				amountOfStepsSinceLastCycle++;
-				createMaze(neighbor, maxCycles, amountOfCyclesInMaze, amountOfStepsSinceLastCycle);
-			}
-			else if(neighbor.visited() && amountOfCyclesInMaze < maxCycles && amountOfStepsSinceLastCycle > 4)
-			{
-				neighbor.visitNeighbor(currentCell);
-				currentCell.visitNeighbor(neighbor);
-				amountOfCyclesInMaze++;
-				currentCell.setImportance(5);
-				amountOfStepsSinceLastCycle = 0;
-				createMaze(neighbor, maxCycles, amountOfCyclesInMaze, amountOfStepsSinceLastCycle);
+				createMaze(neighbor);
 			}
 			
 			if(currentCell.getNumberOfVisitedNeighbors() == currentCell.getNeighbors().size())
