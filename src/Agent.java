@@ -132,8 +132,11 @@ import java.util.Stack;
 		searchedCells.add(min);
 		possibleCells.remove(min);
 		
+		int iteration =0;
 		while(!pathFound)
 		{
+			iteration++;
+			//System.out.println(iteration);
 			//get the last cell added to searchedCells
 			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
 			
@@ -175,7 +178,7 @@ import java.util.Stack;
 			
 			if(min.equals(exit))
 			{
-				//System.out.println("Found");
+				System.out.println("Found");
 				pathFound = true;
 				AStarCell tempCell = min;
 				

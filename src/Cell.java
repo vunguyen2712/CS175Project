@@ -186,8 +186,13 @@ public class Cell {
 		return neighbors.get(cellNumber);
 	}
 	
-	public boolean equals(Cell c)
+	@Override
+	public boolean equals(Object o)
 	{
+		//System.out.println("In Cell cell equals");
+		if(o instanceof Cell)
+		{
+		Cell c = (Cell) o;
 		if(getCoordinates()[0] == c.getCoordinates()[0] && getCoordinates()[1] == c.getCoordinates()[1])
 		{
 			return true;
@@ -196,5 +201,19 @@ public class Cell {
 		{
 			return false;
 		}
+		}
+		else if(o instanceof AStarCell)
+		{
+			AStarCell a = (AStarCell) o;
+			if(getCoordinates()[0] == a.getCell().getCoordinates()[0] && getCoordinates()[1] == 
+					a.getCell().getCoordinates()[1])
+			{
+				return true;
+			}
+			else
+				return false;
+		}
+		else
+			return false;
 	}
 }

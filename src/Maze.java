@@ -290,7 +290,7 @@ public class Maze {
 		Random random = new Random();
 		
 		
-		for (int i = 0; i< max/4; i++)
+		for (int i = 0; i< max/2; i++)
 		{
 			int randomX = random.nextInt(mazeWidth);
 			int randomY = random.nextInt(mazeHeight);
