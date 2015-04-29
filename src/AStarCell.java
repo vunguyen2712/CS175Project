@@ -1,5 +1,3 @@
-package src;
-
 public class AStarCell {
 
 	private Cell cell;
