@@ -9,39 +9,49 @@ public class MazeSolver {
 	public static void main(String[] args)
 	{
 		Maze maze = new Maze(10,10);
-		Window window = new Window();
-		window.render(maze);
+		Window window = new Window(maze);
+		
 		//Scanner sc = new Scanner(System.in);
 		//sc.nextLine();
-		
+
 		//Calculate the path to the exit
 		Agent agent = maze.getAgent();
 		agent.calculatePathThroughMaze();
-		//Game loop, done is set to true when exit is reachd
+		window.render();
+		try {
+			TimeUnit.MILLISECONDS.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		//Game loop, done is set to true when exit is reached
 		try
 		{
-		while(!done)
-		{
-			//Calculate where to go next
-			maze.calculateNextMove();
-			//Move
-			maze.moveAll();
-			//Display
-			window = new Window();
-			window.render(maze);
-			//Detect monsters Catching Agent
-			maze.detectCatches();
-			//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
-			//agent.printStack();
-			//agent.printnextMoves();
-			try {
-				TimeUnit.MILLISECONDS.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			while(!done)
+			{
+				//Calculate where to go next
+				maze.calculateNextMove();
+				//Move
+				maze.moveAll();
+				//Display
+				window.render();
+				//Detect monsters Catching Agent
+				maze.detectCatches();
+				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
+				//agent.printStack();
+				//agent.printnextMoves();
+				/* prints monster coordinates
+				for(int i = 0; i < maze.getMonsters().size(); i++){
+					System.out.print(maze.getMonsters().get(i).getCurrentCell().printCoords());
+				}
+				System.out.println();
+				*/
+				try {
+					TimeUnit.MILLISECONDS.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-
-		System.out.println("Solved!");
+			System.out.println("Solved!");
 		}
 		catch (CaughtException e)
 		{

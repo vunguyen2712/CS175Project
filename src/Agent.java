@@ -48,7 +48,7 @@ import java.util.Stack;
  		{
  		previousCells.push(new AStarCell(currentCell, previousCells.peek(), 0, 0));
  		}
- 		currentCell.moveCreatureOutOfCell();
+ 		currentCell.moveCreatureOutOfCell(this);
  		nextCell.moveCreatureIntoCell(this);
  		currentCell = nextCell;
  		currentCell.aStarVisit();

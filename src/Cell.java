@@ -46,9 +46,10 @@ public class Cell {
 		this.importance = importance;
 	}
 	
-	public void moveCreatureOutOfCell()
+	public void moveCreatureOutOfCell(Moveable creature)
 	{
-		occupied = false;
+		if(creature == creatureInCell)
+			occupied = false;
 	}
 	
 	public void moveCreatureIntoCell(Moveable creature)

@@ -147,6 +147,7 @@ public class Maze {
 		//Create the monsters and agent
 		setMonsters(mazeWidth, mazeHeight);
 		agent = new Agent(entrance, exit);
+		getEntrance().setEntrance(agent);
 	}
 	
 	private int getSide()
@@ -168,28 +169,28 @@ public class Maze {
 		{
 			//Bottom
 			//agent = new Agent(maze[startOffset][0], exit);
-			maze[startOffset][0].setEntrance(agent);
+			//maze[startOffset][0].setEntrance(agent);
 			return maze[startOffset][0];
 		}
 		else if (startSide == 1)
 		{
 			//Left
 			//agent = new Agent(maze[0][startOffset], exit);
-			maze[0][startOffset].setEntrance(agent);
+			//maze[0][startOffset].setEntrance(agent);
 			return maze[0][startOffset];
 		}
 		else if (startSide == 2)
 		{
 			//Top
 			//agent = new Agent(maze[mazeHeight-1][startOffset], exit);
-			maze[mazeHeight-1][startOffset].setEntrance(agent);
+			//maze[mazeHeight-1][startOffset].setEntrance(agent);
 			return maze[mazeHeight-1][startOffset];
 		}
 		else 
 		{
 			//Right
 			//agent = new Agent(maze[startOffset][mazeWidth-1], exit);
-			maze[startOffset][mazeWidth-1].setEntrance(agent);
+			//maze[startOffset][mazeWidth-1].setEntrance(agent);
 			return maze[startOffset][mazeWidth-1];
 		}
 	}

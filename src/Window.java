@@ -1,42 +1,35 @@
 import java.awt.*;
 import java.awt.image.*;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
 public class Window {
 
 	private JFrame frame;
-	private BufferedImage b;
-	private Graphics2D g;
 	private JPanel panel;
 	
 	private Maze maze;
 	private int width;
 	private int height;
-	private final int cellSize = 50;
-	private int x = cellSize;
-	private int y = cellSize;
+	private final int windowSize = 800;
+	private int cellSize;
+	private int x;
+	private int y;
 	
-	public Window()
+	public Window(Maze maze)
 	{
+		initializeMaze(maze);
+		
 		frame = new JFrame("Maze Solver");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setBackground(Color.WHITE);
-		
+		frame.setSize(windowSize+cellSize/2, windowSize+2*cellSize);
 		panel = new Panel();
 	}
 	
-	public void render(Maze maze)
+	public void render()
 	{
-		this.maze = maze;
-		width = maze.getMaze().length;
-		height = maze.getMaze()[0].length;
-		frame.setBounds(0, 0, (width+2)*cellSize, (height+2)*cellSize);
-		b = new BufferedImage((width+2)*cellSize, (height+2)*cellSize, BufferedImage.TYPE_INT_ARGB);
-		g = b.createGraphics();
-		g.setColor(Color.BLACK);
-		
+		frame.repaint();
 		
         frame.add(panel);
         frame.setVisible(true);
@@ -58,18 +51,16 @@ public class Window {
 	        			g2d.setColor(Color.RED);
 	        			g2d.fillRect(x, y, cellSize, cellSize);
 	        		}
-	        		else if(c.isOccupied())
+	        		if(c.isOccupied())
 	        		{
-	        			if(c.getCreature() instanceof Monster)
-	        			{
+	        			if(c.getCreature() instanceof Agent){
 	        				g2d.setColor(Color.YELLOW);
-	        				g2d.fillRect(x, y, cellSize, cellSize);
 	        			}
-	        			else if(c.getCreature() instanceof Agent)
-	        			{
+	        			else{
 	        				g2d.setColor(Color.BLUE);
-	        				g2d.fillRect(x, y, cellSize, cellSize);
 	        			}
+	        			g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
+	        		
 	        		}
 	        		g2d.setColor(Color.BLACK);
 	        		if(!c.hasNorthNeighbor())
@@ -94,4 +85,12 @@ public class Window {
 		}
 	}
 	
+	private void initializeMaze(Maze maze){
+		this.maze = maze;
+		width = maze.getMaze().length;
+		height = maze.getMaze()[0].length;
+		cellSize = windowSize/(Math.max(width, height)+2);
+		x = cellSize;
+		y = cellSize;
+	}
 }

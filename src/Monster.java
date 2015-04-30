@@ -17,7 +17,7 @@ public class Monster extends Moveable{
 		//move out of currentCell
 		//move into nextCell
 		
-		currentCell.moveCreatureOutOfCell();
+		currentCell.moveCreatureOutOfCell(this);
 		nextCell.moveCreatureIntoCell(this);
 		currentCell = nextCell;
 	}
