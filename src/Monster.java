@@ -14,7 +14,6 @@ public class Monster extends Moveable{
 	
 	@Override
 	public void move() {
-		// TODO Auto-generated method stub
 		//move out of currentCell
 		//move into nextCell
 		

@@ -184,6 +184,18 @@ public class Cell {
 		return neighbors.get(cellNumber);
 	}
 	
+	public boolean hasMonster()
+	{
+		if(occupied && creatureInCell instanceof Monster)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	@Override
 	public boolean equals(Object o)
 	{

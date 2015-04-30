@@ -349,7 +349,7 @@ public class Maze {
 			{
 				movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random postion
 				++ recalTimes;
-				System.out.println("monster collision");
+				//System.out.println("monster collision");
 				if (recalTimes > 3) // if encounter a trap
 				{
 					// recalculate next postion for all monsters
@@ -359,10 +359,10 @@ public class Maze {
 					}
 					movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random postion
 					recalTimes = 0;
-					System.out.println("recalculated all next move for monsters!");
+					//System.out.println("recalculated all next move for monsters!");
 				}
 			}
-			System.out.println("monster new postion!");
+			//System.out.println("monster new postion!");
 		}
 	}
 	
@@ -372,6 +372,18 @@ public class Maze {
 		for(Monster m : monsters)
 		{
 			m.move();
+		}
+	}
+	
+	public void detectCatches()
+	throws CaughtException
+	{
+		for (Monster m : monsters)
+		{
+			if(m.getX() == agent.getX() && m.getY() == agent.getY())
+			{
+				throw new CaughtException("");
+			}
 		}
 	}
 }
