@@ -8,7 +8,7 @@ public class MazeSolver {
 	public static boolean done = false;
 	public static void main(String[] args)
 	{
-		Maze maze = new Maze(5,5);
+		Maze maze = new Maze(10,10);
 		Window window = new Window();
 		window.render(maze);
 		//Scanner sc = new Scanner(System.in);
@@ -52,6 +52,14 @@ public class MazeSolver {
 		//{
 			//System.out.println("Monster blocking the way outside of the entrance");
 		//}
+		catch(Exception e)
+		{
+			System.out.println("Error - Below is the State -");
+			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
+			maze.printMonsterPositions();
+			agent.printStack();
+			agent.printnextMoves();
+		}
 		
 	}
 	

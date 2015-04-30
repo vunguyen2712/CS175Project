@@ -44,8 +44,10 @@ import java.util.Stack;
  	
  	@Override
  	public void move() {
-
+ 		if(!currentCell.equals(entrance))
+ 		{
  		previousCells.push(new AStarCell(currentCell, previousCells.peek(), 0, 0));
+ 		}
  		currentCell.moveCreatureOutOfCell();
  		nextCell.moveCreatureIntoCell(this);
  		currentCell = nextCell;
@@ -179,6 +181,8 @@ import java.util.Stack;
  		}
  		catch(EmptyStackException E)
  		{
+ 			if(fallbackCell.equals(entrance))
+ 				return entrance.getCell();
  			return fallbackCell;
  		}
 	}

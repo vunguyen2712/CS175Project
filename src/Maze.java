@@ -375,6 +375,16 @@ public class Maze {
 		}
 	}
 	
+	public void printMonsterPositions()
+	{
+		System.out.print("Monster Positions -");
+		for (Monster m : monsters)
+		{
+			System.out.print(" (" + m.getX() + "," + m.getY() + ")");
+		}
+		System.out.println("");
+	}
+	
 	public void detectCatches()
 	throws CaughtException
 	{
