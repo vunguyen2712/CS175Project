@@ -31,7 +31,7 @@ public class MazeSolver {
 			window.render(maze);
 			//Detect monsters Catching Agent
 			maze.detectCatches();
-			System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
+			//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 			//agent.printStack();
 			//agent.printnextMoves();
 			try {
