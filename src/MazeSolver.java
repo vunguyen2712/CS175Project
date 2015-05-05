@@ -2,13 +2,15 @@ import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import Logging.Log;
+
 
 public class MazeSolver {
 
 	public static boolean done = false;
 	public static void main(String[] args)
 	{
-		Maze maze = new Maze(10,10);
+		Maze maze = new Maze(15,15);
 		Window window = new Window(maze);
 		
 		//Scanner sc = new Scanner(System.in);
@@ -46,15 +48,19 @@ public class MazeSolver {
 				System.out.println();
 				*/
 				try {
-					TimeUnit.MILLISECONDS.sleep(1000);
+					TimeUnit.MILLISECONDS.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+			Log.Log("Success");
+
 			System.out.println("Solved!");
 		}
 		catch (CaughtException e)
 		{
+
+			Log.Log("Failure");
 			System.out.println("Agent was caught!");
 			System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
 		}
@@ -64,6 +70,8 @@ public class MazeSolver {
 		//}
 		catch(Exception e)
 		{
+
+			Log.Log("Error");
 			System.out.println("Error - Below is the State -");
 			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();

@@ -379,7 +379,7 @@ import java.util.Stack;
 			
 			if(min.equals(exit))
 			{
-				System.out.println("Found");
+				//System.out.println("Found");
 				pathFound = true;
 				AStarCell tempCell = min;
 				
