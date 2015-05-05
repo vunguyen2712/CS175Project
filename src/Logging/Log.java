@@ -9,9 +9,12 @@ import java.util.Date;
 
 public class Log {
 
+	//Scema for the database is a database name cs175, 
+	// Table is called results(version VARCHAR(200), result VARCHAR(20), date, VARCHAR(200), PRIMARY KEY (date))
 	static String  version = "1.6";
 	public static void Log(String result)
 	{
+		//Username/password to the database are admin's of your database, could be root and password
 		String username = "testuser";
 		String password = "testpassword";
 		
