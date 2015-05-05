@@ -15,14 +15,14 @@ public class Log {
 	public static void Log(String result)
 	{
 		//Username/password to the database are admin's of your database, could be root and password
-		String username = "testuser";
+		String username = "testus";
 		String password = "testpassword";
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		   //get current date time with Date()
 		Date d = new Date();
 		String date = dateFormat.format(d);
-		System.out.println(date);
+		//System.out.println(date);
 		try
 		{
 		MySQLConnector c = new MySQLConnector(username,password);
