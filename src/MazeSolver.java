@@ -8,6 +8,7 @@ import Logging.Log;
 public class MazeSolver {
 
 	public static boolean done = false;
+	public static boolean debugRun = true;
 	public static void main(String[] args)
 	{
 		Maze maze = new Maze(15,15);
@@ -53,14 +54,15 @@ public class MazeSolver {
 					e.printStackTrace();
 				}
 			}
-			Log.Log("Success");
+			if(!debugRun)
+				Log.Log("Success");
 
 			System.out.println("Solved!");
 		}
 		catch (CaughtException e)
 		{
-
-			Log.Log("Failure");
+			if(!debugRun)
+				Log.Log("Failure");
 			System.out.println("Agent was caught!");
 			System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
 		}
@@ -70,8 +72,8 @@ public class MazeSolver {
 		//}
 		catch(Exception e)
 		{
-
-			Log.Log("Error");
+			if(!debugRun)
+				Log.Log("Error");
 			System.out.println("Error - Below is the State -");
 			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();
