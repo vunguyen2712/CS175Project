@@ -1,6 +1,9 @@
 package Logging;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -15,7 +18,7 @@ public class Log {
 	public static void Log(String result)
 	{
 		//Username/password to the database are admin's of your database, could be root and password
-		String username = "testus";
+		String username = "testuser";
 		String password = "testpassword";
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -30,15 +33,27 @@ public class Log {
 		}
 		catch (Exception e)
 		{
-			PrintWriter writer;
-			try {
-				writer = new PrintWriter("Errors.txt", "UTF-8");
-				writer.println(result + " " + date + " " + version);
-				writer.close();
-			}
-			catch(Exception ex)
+			BufferedWriter out = null;
+			try  
 			{
-				System.out.println("multiple errors occured");
+			    FileWriter fstream = new FileWriter("Errors.txt", true); //true tells to append data.
+			    out = new BufferedWriter(fstream);
+			    out.write(version + " " + date + " " + result + "\n");
+			}
+			catch (IOException ee)
+			{
+			    System.err.println("Error: " + ee.getMessage());
+			}
+			finally
+			{
+			    if(out != null) {
+			        try {
+						out.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			    }
 			}
 		}
 	}
