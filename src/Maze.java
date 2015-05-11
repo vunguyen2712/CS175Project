@@ -412,7 +412,15 @@ public class Maze {
 		{
 			if(m.getX() == agent.getX() && m.getY() == agent.getY())
 			{
-				throw new CaughtException("");
+				throw new CaughtException("Caught");
+			}
+			//The agent and the monster moved past eachother in the "hallway
+			else if(m.getLastCell().equals(agent.getCurrentCell())
+					&& m.getCurrentCell().equals(agent.getLastCell()))
+			{
+				System.out.println("( " + m.getCurrentCell().getCoordinates()[0] + ", " + m.getCurrentCell().getCoordinates()[1] + ")");
+				System.out.println("( " + m.getLastCell().getCoordinates()[0] + ", " + m.getLastCell().getCoordinates()[1] + ")");
+				throw new CaughtException("Caught");
 			}
 		}
 	}

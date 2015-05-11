@@ -5,6 +5,7 @@ public class Monster extends Moveable{
 
 	private Cell currentCell;
 	private Cell nextCell;
+	private Cell lastCell;
 	
 	public Monster(Cell startingCell)
 	{
@@ -16,7 +17,7 @@ public class Monster extends Moveable{
 	public void move() {
 		//move out of currentCell
 		//move into nextCell
-		
+		lastCell = currentCell;
 		currentCell.moveCreatureOutOfCell(this);
 		nextCell.moveCreatureIntoCell(this);
 		currentCell = nextCell;
@@ -47,6 +48,11 @@ public class Monster extends Moveable{
 	public Cell getNextCell()
 	{
 		return nextCell;
+	}
+	
+	public Cell getLastCell()
+	{
+		return lastCell;
 	}
 	
 }

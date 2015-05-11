@@ -17,7 +17,7 @@ import java.util.Stack;
 	private final int  bigNumber = 1000000;
 	
 	//private Stack<Cell> previousMoves;
-	//private Cell lastMove;
+	private Cell lastMove;
 	
 	//private Stack<AStarCell> previousCells;
 	
@@ -45,10 +45,7 @@ import java.util.Stack;
  	
  	@Override
  	public void move() {
- 		if(!currentCell.equals(entrance))
- 		{
-			//previousCells.push(currentCell);
- 		}
+ 		lastMove = currentCell.getCell();
  		
  		currentCell.getCell().moveCreatureOutOfCell(this);
  		nextCell.getCell().moveCreatureIntoCell(this);
@@ -497,6 +494,16 @@ import java.util.Stack;
  			System.out.print(c.getCoordinates()[0] + "," + c.getCoordinates()[1] + ") - ");
  		}
  		System.out.println("");
+ 	}
+ 	
+ 	public Cell getLastCell()
+ 	{
+ 		return lastMove;
+ 	}
+ 	
+ 	public Cell getCurrentCell()
+ 	{
+ 		return currentCell.getCell();
  	}
  
  }

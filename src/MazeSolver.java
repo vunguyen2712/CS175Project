@@ -67,6 +67,8 @@ public class MazeSolver {
 				Log.Log("Failure", version);
 			System.out.println("Agent was caught!");
 			System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
+			System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
+		
 		}
 		//catch (EmptyStackException e)
 		//{

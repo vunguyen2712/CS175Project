@@ -7,3 +7,4 @@ Changes from 1.6 - 1.7
 - added error handling to remove errors when monster too close to entrance
 - removed the ability for monsters to spawn at the entrance
 - removed the ability for entrance and exit to be at the same location
+- Made it so that if agent and monster cross in a "hallway", it is considered a catch
