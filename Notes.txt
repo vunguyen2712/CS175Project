@@ -1,5 +1,1 @@
-Pacman maze solver solution - http://www.emagix.net/academic/item/pacman-using-artificial-intelligence
-
-Manhattan distance - 
-
-Add Cycles tot he graph
+Working on changing path to ASTARCELL - then JUST use previousCells();

@@ -1,0 +1,9 @@
+Version 1.7
+
+Changes from 1.6 - 1.7
+- Removed previousMoves stack 
+- Changed path from Cells to AStarCells
+- Keeps track of previous cells by using AStarCells now
+- added error handling to remove errors when monster too close to entrance
+- removed the ability for monsters to spawn at the entrance
+- removed the ability for entrance and exit to be at the same location

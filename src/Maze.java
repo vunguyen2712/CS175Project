@@ -66,11 +66,11 @@ public class Maze {
 		
 		if(mazeWidth <= mazeHeight)
 		{
-			maxCycles = mazeWidth/2;
+			maxCycles = mazeWidth *2;
 		}
 		else
 		{
-			maxCycles = mazeHeight/2;
+			maxCycles = mazeHeight *2;
 		}
 		
 		//Start on the left or right side of the maze
@@ -93,13 +93,6 @@ public class Maze {
 		else
 		{
 			endOffset = getOffset(mazeWidth);
-		}
-		
-		//Detect whether the entrance/exit could possibly by the same... this can be changed later so that
-		//We can allow them to be on the same side
-		while(startSide == endSide)
-		{
-			endSide = getSide();
 		}
 		
 		for(int i = 0; i<mazeWidth; i++)
@@ -141,6 +134,20 @@ public class Maze {
 		exit = createExit(mazeHeight, mazeWidth, endSide, endOffset);
 		
 		entrance = createEntrance(mazeHeight, mazeWidth, startSide, startOffset);
+		//don't allow exit and entrance to be the same
+		while(exit.equals(entrance))
+		{
+			endSide = getSide();
+			if(endSide == 1 || endSide == 3)
+			{
+				endOffset = getOffset(mazeHeight);
+			}
+			else
+			{
+				endOffset = getOffset(mazeWidth);
+			}
+			exit = createExit(mazeHeight, mazeWidth, endSide, endOffset);
+		}
 
 		createMaze(entrance, maxCycles, 0, 0);
 		
@@ -201,6 +208,8 @@ public class Maze {
 		if(endSide == 0)
 		{
 			//Bottom
+			//Cell temp = maze[endOffset][0];
+			//while ()
 			maze[endOffset][0].setExit();
 			return maze[endOffset][0];
 		}
@@ -291,9 +300,19 @@ public class Maze {
 		
 		for (int i = 0; i< max/2; i++)
 		{
+			
 			int randomX = random.nextInt(mazeWidth);
 			int randomY = random.nextInt(mazeHeight);
-			Monster temp = new Monster(maze[randomX][randomY]);
+			Cell monsterCell = maze[randomX][randomY];
+			
+			while(monsterCell.equals(entrance) || monsterCell.equals(exit))
+			{
+				randomX = random.nextInt(mazeWidth);
+				randomY = random.nextInt(mazeHeight);
+				monsterCell = maze[randomX][randomY];
+			}
+			
+			Monster temp = new Monster(monsterCell);
 			monsters.add(temp);
 			maze[randomX][randomY].moveCreatureIntoCell(temp);
 		}

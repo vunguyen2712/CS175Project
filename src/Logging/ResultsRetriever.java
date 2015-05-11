@@ -7,7 +7,7 @@ public class ResultsRetriever {
 	{
 		String username = "testuser";
 		String password = "testpassword";
-		int versionNumber = 6;
+		int versionNumber = 7;
 		try
 		{
 		MySQLConnector c = new MySQLConnector(username,password);

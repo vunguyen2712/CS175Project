@@ -5,39 +5,40 @@ import java.util.Stack;
  
  public class Agent extends Moveable{
  	
- 	private Cell currentCell;
- 	private Cell nextCell;
- 	private Stack<Cell> visitedCells;
+ 	private AStarCell currentCell;
+ 	private AStarCell nextCell;
+ 	//private Stack<Cell> visitedCells;
  	private Cell exit;
  	
-	private Stack<Cell> path;
+	private Stack<AStarCell> path;
 	private int cellCost = 1;
 	private AStarCell entrance;
 	
 	private final int  bigNumber = 1000000;
 	
-	private Stack<Cell> previousMoves;
-	private Cell lastMove;
+	//private Stack<Cell> previousMoves;
+	//private Cell lastMove;
 	
-	private Stack<AStarCell> previousCells;
+	//private Stack<AStarCell> previousCells;
 	
 	private boolean recalculatedLastTime = false;
  	
  	public Agent(Cell entrance, Cell exit)
  	{
- 		currentCell = entrance;
- 		visitedCells = new Stack<Cell>();
+ 		
+ 		//visitedCells = new Stack<Cell>();
  		this.exit = exit;
 
-		path = new Stack<Cell>();
+		path = new Stack<AStarCell>();
 		
 		this.entrance = new AStarCell(entrance, null, 0, 0);
+		currentCell = this.entrance;
 		
-		previousMoves = new Stack<Cell>();
-		lastMove = entrance;
+		//previousMoves = new Stack<Cell>();
+		//lastMove = entrance;
 		
-		previousCells = new Stack<AStarCell>();
-		previousCells.push(this.entrance);
+		//previousCells = new Stack<AStarCell>();
+		//previousCells.push(this.entrance);
  		//System.out.print("exit - ");
  		//exit.printCoords1();
  	}
@@ -46,12 +47,13 @@ import java.util.Stack;
  	public void move() {
  		if(!currentCell.equals(entrance))
  		{
- 		previousCells.push(new AStarCell(currentCell, previousCells.peek(), 0, 0));
+			//previousCells.push(currentCell);
  		}
- 		currentCell.moveCreatureOutOfCell(this);
- 		nextCell.moveCreatureIntoCell(this);
+ 		
+ 		currentCell.getCell().moveCreatureOutOfCell(this);
+ 		nextCell.getCell().moveCreatureIntoCell(this);
  		currentCell = nextCell;
- 		currentCell.aStarVisit();
+ 		currentCell.getCell().aStarVisit();
  		
  		if(currentCell.equals(exit))
  		{
@@ -100,55 +102,52 @@ import java.util.Stack;
 		//monster in it
 
 		nextCell = path.pop();
- 		Cell fallbackCell = nextCell;
+ 		Cell fallbackCell = nextCell.getCell();
  		try
  		{
+ 			//Calculate if a monster is in one of the neighboring cells of nextCell
+		boolean monstersInNeighbors = false;
+		for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
+		{
+			Cell temp = nextCell.getCell().getNeighbors().get(i);
+			if(temp.hasMonster())
+				monstersInNeighbors =  true;
+		}		
+		if(nextCell.getCell().hasMonster() || monstersInNeighbors)
+		{
  		if(!recalculatedLastTime)
  		{
 		//aStarPath.pop();
-		boolean monstersInNeighbors = false;
-		for (int i = 0; i < nextCell.getNeighbors().size(); i++)
-		{
-			Cell temp = nextCell.getNeighbors().get(i);
-			if(temp.hasMonster())
-				monstersInNeighbors =  true;
-		}
-		
-		if(nextCell.hasMonster() || monstersInNeighbors)
-		{
-			recalculatePathThroughMaze();
-			recalculatedLastTime = true;
-			//System.out.println("recalculated");
-		}
+
+		recalculatePathThroughMaze();
+		recalculatedLastTime = true;
+		//System.out.println("recalculated");
 		
 		monstersInNeighbors = false;
-		for (int i = 0; i < nextCell.getNeighbors().size(); i++)
+		for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
 		{
-			Cell temp = nextCell.getNeighbors().get(i);
+			Cell temp = nextCell.getCell().getNeighbors().get(i);
 			if(temp.hasMonster())
 				monstersInNeighbors =  true;
 		}
-		
-		if(nextCell.hasMonster() || monstersInNeighbors)
+		//Path would still lead to agent being caught
+		if(nextCell.getCell().hasMonster() || monstersInNeighbors || nextCell.equals(fallbackCell))
 		{
 			//moveBackOneCell ----- To avoid the monster
-			nextCell = previousMoves.pop();
-			recalculatedLastTime = true;
-			/*if(nextCell.equals(lastMove))
-			{
-				nextCell = previousMoves.pop();
-			}*/
+			calculateMoveWhenMonsterInFront();
 		}
+		else{
 		
- 		previousMoves.push(currentCell);
- 		lastMove = currentCell;
+ 		//previousCells.push(currentCell);
+ 		//lastMove = currentCell;
+		}
  		}
  		else
  		{
  			recalculatedLastTime = false;
  			recalculatePathThroughMaze();
  			
- 			boolean monstersInNeighbors = false;
+ 			monstersInNeighbors = false;
  			/*if(nextCell.hasMonster() || monstersInNeighbors)
  			{
  				recalculatePathThroughMaze();
@@ -157,17 +156,17 @@ import java.util.Stack;
  			}*/
  			
  			monstersInNeighbors = false;
- 			for (int i = 0; i < nextCell.getNeighbors().size(); i++)
+ 			for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
  			{
- 				Cell temp = nextCell.getNeighbors().get(i);
+ 				Cell temp = nextCell.getCell().getNeighbors().get(i);
  				if(temp.hasMonster())
  					monstersInNeighbors =  true;
  			}
  			
- 			if(nextCell.hasMonster() || monstersInNeighbors)
+ 			if(nextCell.getCell().hasMonster() || monstersInNeighbors)
  			{
  				//moveBackOneCell ----- To avoid the monster
- 				nextCell = previousMoves.pop();
+ 				calculateMoveWhenMonsterInFront();
  				/*if(nextCell.equals(lastMove))
  				{
  					nextCell = previousMoves.pop();
@@ -175,9 +174,10 @@ import java.util.Stack;
  			}
  			else
  				nextCell = path.pop();
- 			previousMoves.push(currentCell);
+ 			//previousCells.push(currentCell);
  		}
-		return nextCell;
+		}
+		return nextCell.getCell();
  		}
  		catch(EmptyStackException E)
  		{
@@ -195,7 +195,7 @@ import java.util.Stack;
 		
 		//Initialize aStarFunction
 		
-		ArrayList<Cell> temp = currentCell.getNeighbors();
+		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
 		searchedCells.add(entrance);
 		
 		for(int i = 0; i < temp.size(); i++)
@@ -215,7 +215,9 @@ import java.util.Stack;
 		AStarCell min = possibleCells.get(0);
 		for(int i = 0; i < possibleCells.size(); i++)
 		{
-			if(possibleCells.get(i).getCost() < min.getCost() )
+			int costForMin = min.getCost() + min.getHeuristic();
+			int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+			if(costForTempCell < costForMin)
 			{
 				min = possibleCells.get(i);
 				//System.out.println("newMinInInit");
@@ -225,7 +227,21 @@ import java.util.Stack;
 		//System.out.println(possibleCells.size());
 		searchedCells.add(min);
 		possibleCells.remove(min);
-
+		if(min.equals(exit))
+		{
+			pathFound = true;
+			AStarCell tempCell = min;
+			
+			//Trace back your steps, adding each step to the path stack
+			while(!tempCell.equals(entrance))
+			{
+			path.push(tempCell);
+			//aStarPath.push(tempCell);
+			
+			tempCell = tempCell.getParentCell();
+			}
+			path.push(entrance);
+		}
 		while(!pathFound)
 		{
 			//System.out.println(iteration);
@@ -256,7 +272,9 @@ import java.util.Stack;
 			min = possibleCells.get(0);
 			for(int i = 0; i < possibleCells.size(); i++)
 			{
-				if(possibleCells.get(i).getCost() < min.getCost())
+				int costForMin = min.getCost() + min.getHeuristic();
+				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+				if(costForTempCell < costForMin)
 				{
 					min = possibleCells.get(i);
 					//System.out.println("new min");
@@ -277,33 +295,41 @@ import java.util.Stack;
 				//Trace back your steps, adding each step to the path stack
 				while(!tempCell.equals(entrance))
 				{
-				Cell c = tempCell.getCell();
-				path.push(c);
+				path.push(tempCell);
 				//aStarPath.push(tempCell);
 				
 				tempCell = tempCell.getParentCell();
 				}
-				path.push(entrance.getCell());
+				path.push(entrance);
 				//System.out.println("Path found!");
 			}
 			//System.out.println("Path NOT found! Keep Trying!");
 		}
 		path.pop();
+		//previousMoves.push(entrance.getCell());
 		
 	}
 	
 	public void recalculatePathThroughMaze()
 	{
+		/*try{
+			System.out.println("Recalculating");
+			TimeUnit.MILLISECONDS.sleep(10000);
+		}
+		catch (Exception e)
+		{
+			
+		}*/
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
-		path = new Stack<Cell>();
+		path = new Stack<AStarCell>();
 		
 		
 		//Initialize aStarFunction
 		
-		ArrayList<Cell> temp = currentCell.getNeighbors();
-		AStarCell startingPoint = new AStarCell(currentCell, previousCells.pop(), 0, 0);
+		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
+		AStarCell startingPoint = currentCell;
 		//aStarPath = new Stack<AStarCell>();
 		searchedCells.add(startingPoint);
 		
@@ -323,10 +349,12 @@ import java.util.Stack;
 		//Find the "closest" neighbor
 		AStarCell min = possibleCells.get(0);
 		for(int i = 0; i < possibleCells.size(); i++)
+		{				
+		int costForMin = min.getCost() + min.getHeuristic();
+		int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+		if(costForTempCell < costForMin)
 		{
-			if(possibleCells.get(i).getCost() < min.getCost() )
-			{
-				min = possibleCells.get(i);
+			min = possibleCells.get(i);
 				//System.out.println("newMinInInit");
 			}
 		}
@@ -365,7 +393,9 @@ import java.util.Stack;
 			min = possibleCells.get(0);
 			for(int i = 0; i < possibleCells.size(); i++)
 			{
-				if(possibleCells.get(i).getCost() < min.getCost())
+				int costForMin = min.getCost() + min.getHeuristic();
+				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+				if(costForTempCell < costForMin)
 				{
 					min = possibleCells.get(i);
 					//System.out.println("new min");
@@ -386,8 +416,7 @@ import java.util.Stack;
 				//Trace back your steps, adding each step to the path stack
 				while(!tempCell.equals(startingPoint))
 				{
-				Cell c = tempCell.getCell();
-				path.push(c);
+				path.push(tempCell);
 				
 				//aStarPath.push(tempCell);
 				
@@ -406,8 +435,10 @@ import java.util.Stack;
 		int heuristic = manhattanDistance(c);
 		if(c.hasMonster())
 		{
-			pathCost = bigNumber;
+			pathCost = pathCost + bigNumber;
 		}
+		else
+			pathCost = pathCost++;
 		
 		return pathCost + heuristic;
 	}
@@ -420,25 +451,39 @@ import java.util.Stack;
  	
  	public int getX()
  	{
- 		return currentCell.getCoordinates()[0];
+ 		return currentCell.getCell().getCoordinates()[0];
  	}
  	
  	public int getY()
  	{
- 		return currentCell.getCoordinates()[1];
+ 		return currentCell.getCell().getCoordinates()[1];
  	}
  	
  	public void printStack()
  	{
  		System.out.println("Previous Moves - ");
- 		for(int i = 0; i < previousMoves.size(); i++)
+ 		//for(int i = 0; i < previousCells.size(); i++)
  		{
- 			System.out.print("(");
- 			Cell c = previousMoves.get(i);
+ 			//System.out.print("(");
+ 			//Cell c = previousCells.get(i).getCell();
  			
- 			System.out.print(c.getCoordinates()[0] + "," + c.getCoordinates()[1] + ") - ");
+ 			//System.out.print(c.getCoordinates()[0] + "," + c.getCoordinates()[1] + ") - ");
  		}
  		System.out.println("");
+ 	}
+ 	
+ 	private void calculateMoveWhenMonsterInFront()
+ 	{
+		if(!currentCell.equals(entrance))
+		{
+		nextCell = currentCell.getParentCell();
+		path.push(currentCell);
+		recalculatedLastTime = true;
+		}
+		else
+		{
+			nextCell = currentCell;
+		}
  	}
  	
  	public void printnextMoves()
@@ -447,7 +492,7 @@ import java.util.Stack;
  		for(int i = 0; i < path.size(); i++)
  		{
  			System.out.print("(");
- 			Cell c = path.get(path.size() - i - 1);
+ 			Cell c = path.get(path.size() - i - 1).getCell();
  			
  			System.out.print(c.getCoordinates()[0] + "," + c.getCoordinates()[1] + ") - ");
  		}

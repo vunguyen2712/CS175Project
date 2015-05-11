@@ -8,7 +8,8 @@ import Logging.Log;
 public class MazeSolver {
 
 	public static boolean done = false;
-	public static boolean debugRun = true;
+	public static boolean debugRun = false;
+	static String version = "1.7";
 	public static void main(String[] args)
 	{
 		Maze maze = new Maze(15,15);
@@ -18,11 +19,12 @@ public class MazeSolver {
 		//sc.nextLine();
 
 		//Calculate the path to the exit
+
+		window.render();
 		Agent agent = maze.getAgent();
 		agent.calculatePathThroughMaze();
-		window.render();
 		try {
-			TimeUnit.MILLISECONDS.sleep(1000);
+			TimeUnit.MILLISECONDS.sleep(10);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -49,20 +51,20 @@ public class MazeSolver {
 				System.out.println();
 				*/
 				try {
-					TimeUnit.MILLISECONDS.sleep(1000);
+					TimeUnit.MILLISECONDS.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 			if(!debugRun)
-				Log.Log("Success");
+				Log.Log("Success", version);
 
 			System.out.println("Solved!");
 		}
 		catch (CaughtException e)
 		{
 			if(!debugRun)
-				Log.Log("Failure");
+				Log.Log("Failure", version);
 			System.out.println("Agent was caught!");
 			System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
 		}
@@ -73,14 +75,15 @@ public class MazeSolver {
 		catch(Exception e)
 		{
 			if(!debugRun)
-				Log.Log("Error");
+				Log.Log("Error", version);
 			System.out.println("Error - Below is the State -");
 			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();
 			agent.printStack();
 			agent.printnextMoves();
+			System.out.println(e.getClass());
+			e.printStackTrace();
 		}
 		
 	}
-	
 }
