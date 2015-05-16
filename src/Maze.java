@@ -9,12 +9,14 @@ public class Maze {
 	private Cell exit;
 	private ArrayList<Monster> monsters;
 	private Agent agent;
+	private ArrayList<Reward> rewards;
 	
 	public Maze(int mazeWidth, int mazeHeight)
 	{
 		//Initialize and call the big method
 		maze = new Cell[mazeWidth][mazeHeight];
 		monsters = new ArrayList<Monster>();
+		rewards = new ArrayList<Reward>();
 		generateMaze(mazeWidth, mazeHeight);
 		
 		/*int[] encoords = entrance.getCoordinates();
@@ -153,6 +155,7 @@ public class Maze {
 		
 		//Create the monsters and agent
 		setMonsters(mazeWidth, mazeHeight);
+		setRewards(mazeWidth, mazeHeight);
 		agent = new Agent(entrance, exit);
 		getEntrance().setEntrance(agent);
 	}
@@ -319,6 +322,42 @@ public class Maze {
 		
 	}
 	
+	private void setRewards(int mazeWidth, int mazeHeight)
+	{
+		
+		int max;
+		if(mazeWidth <= mazeHeight)
+		{
+			max = mazeWidth;
+		}
+		else
+		{
+			max = mazeHeight;
+		}
+		
+		Random random = new Random();
+		
+		for (int i = 0; i< max/2; i++)
+		{
+			
+			int randomX = random.nextInt(mazeWidth);
+			int randomY = random.nextInt(mazeHeight);
+			Cell rewardCell = maze[randomX][randomY];
+			
+			while(rewardCell.equals(entrance) || rewardCell.equals(exit) || rewardCell.hasReward())
+			{
+				randomX = random.nextInt(mazeWidth);
+				randomY = random.nextInt(mazeHeight);
+				rewardCell = maze[randomX][randomY];
+			}
+			int value = random.nextInt(6);
+			value = value * 100;
+			Reward temp = new Reward(rewardCell, value);
+			rewards.add(temp);
+			maze[randomX][randomY].setReward(temp);
+		}
+	}
+	
 	public Cell getEntrance()
 	{
 		return entrance;
@@ -336,6 +375,11 @@ public class Maze {
 	public ArrayList<Monster> getMonsters()
 	{
 		return monsters;
+	}
+	
+	public ArrayList<Reward> getReward()
+	{
+		return rewards;
 	}
 	
 	public Agent getAgent()

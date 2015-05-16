@@ -12,6 +12,8 @@ public class Cell {
 	private boolean visited;
 	private ArrayList<Cell> neighborsIVisited;
 	private boolean aStarVisited;
+	private Reward reward;
+	private boolean hasReward;
 	
 	public Cell(int x, int y)
 	{
@@ -22,6 +24,7 @@ public class Cell {
 		visited = false;
 		neighborsIVisited = new ArrayList<Cell>();
 		aStarVisited = false;
+		hasReward = false;
 	}
 	
 	public void setNeighbors(ArrayList<Cell> neighbors)
@@ -183,6 +186,22 @@ public class Cell {
 	public Cell getSpecificNeighbor(int cellNumber)
 	{
 		return neighbors.get(cellNumber);
+	}
+	
+	public void setReward(Reward reward)
+	{
+		hasReward = true;
+		this.reward = reward;
+	}
+	
+	public boolean hasReward()
+	{
+		return hasReward;
+	}
+	
+	public Reward getReward()
+	{
+		return reward;
 	}
 	
 	public boolean hasMonster()

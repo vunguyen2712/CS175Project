@@ -12,7 +12,7 @@ public class MazeSolver {
 	static String version = "1.7";
 	public static void main(String[] args)
 	{
-		Maze maze = new Maze(15,15);
+		Maze maze = new Maze(20,20);
 		Window window = new Window(maze);
 		
 		//Scanner sc = new Scanner(System.in);
@@ -24,7 +24,7 @@ public class MazeSolver {
 		Agent agent = maze.getAgent();
 		agent.calculatePathThroughMaze();
 		try {
-			TimeUnit.MILLISECONDS.sleep(10);
+			TimeUnit.MILLISECONDS.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -51,7 +51,7 @@ public class MazeSolver {
 				System.out.println();
 				*/
 				try {
-					TimeUnit.MILLISECONDS.sleep(10);
+					TimeUnit.MILLISECONDS.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
