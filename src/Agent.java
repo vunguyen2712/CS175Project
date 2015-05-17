@@ -464,7 +464,7 @@ import java.util.Stack;
  	}
 
 	
-/*	rewardToVisit(Cell c) function returns the postion of the smallest reward
+/*	rewardToVisit(Cell c) function returns the postion of the closest reward
  */
 	private int rewardToVisit(Cell c)
 	{
