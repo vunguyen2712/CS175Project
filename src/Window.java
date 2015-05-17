@@ -1,3 +1,5 @@
+package src;
+
 import java.awt.*;
 import java.awt.image.*;
 
@@ -51,14 +53,19 @@ public class Window {
 	        			g2d.setColor(Color.RED);
 	        			g2d.fillRect(x, y, cellSize, cellSize);
 	        		}
+	        		if(c.hasReward()){
+        				g2d.setColor(Color.ORANGE);
+        				g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
+	        		}
 	        		if(c.isOccupied())
 	        		{
 	        			if(c.getCreature() instanceof Agent){
 	        				g2d.setColor(Color.YELLOW);
 	        			}
-	        			else{
+	        			else if(c.getCreature() instanceof Monster){
 	        				g2d.setColor(Color.BLUE);
 	        			}
+	 
 	        			g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
 	        		
 	        		}

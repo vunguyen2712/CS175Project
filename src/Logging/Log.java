@@ -1,4 +1,4 @@
-package Logging;
+package src.Logging;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;

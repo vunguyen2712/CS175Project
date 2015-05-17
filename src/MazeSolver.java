@@ -1,8 +1,10 @@
+package src;
+
 import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import Logging.Log;
+import src.Logging.Log;
 
 
 public class MazeSolver {
@@ -12,7 +14,7 @@ public class MazeSolver {
 	static String version = "1.7";
 	public static void main(String[] args)
 	{
-		Maze maze = new Maze(20,20);
+		Maze maze = new Maze(15,15);
 		Window window = new Window(maze);
 		
 		//Scanner sc = new Scanner(System.in);
