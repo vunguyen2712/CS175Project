@@ -10,7 +10,10 @@ import java.util.Stack;
  	private AStarCell currentCell;
  	private AStarCell nextCell;
  	//private Stack<Cell> visitedCells;
+ 	// visible items
  	private Cell exit;
+ 	private ArrayList<Reward> rewards;
+ 	private int rewardsLeft;
  	
 	private Stack<AStarCell> path;
 	private int cellCost = 1;
@@ -25,12 +28,14 @@ import java.util.Stack;
 	
 	private boolean recalculatedLastTime = false;
  	
- 	public Agent(Cell entrance, Cell exit)
+ 	public Agent(Cell entrance, Cell exit, ArrayList<Reward> rewards)
  	{
  		
  		//visitedCells = new Stack<Cell>();
  		this.exit = exit;
-
+ 		this.rewards = rewards;
+ 		rewardsLeft = rewards.size();
+ 		
 		path = new Stack<AStarCell>();
 		
 		this.entrance = new AStarCell(entrance, null, 0, 0);
@@ -431,7 +436,11 @@ import java.util.Stack;
 	private int calculateCellDistance(Cell c)
 	{
 		int pathCost = cellCost;
-		int heuristic = manhattanDistance(c);
+		
+		int nextRewardPos= rewardToVisit(c);
+		int heuristic = manhattanDistance(c, rewards.get(nextRewardPos).getCell());
+		
+//		int heuristic = manhattanDistance(c);
 		if(c.hasMonster())
 		{
 			pathCost = pathCost + bigNumber;
@@ -447,7 +456,33 @@ import java.util.Stack;
  		return Math.abs(exit.getCoordinates()[0]-c.getCoordinates()[0]) + Math.abs(exit.getCoordinates()[1]
  				-c.getCoordinates()[1]);
  	}
- 	
+
+	private int manhattanDistance(Cell c, Cell goalCell)  // goalCell could be either reward of the exit
+ 	{
+ 		return Math.abs(goalCell.getCoordinates()[0]-c.getCoordinates()[0]) + Math.abs(goalCell.getCoordinates()[1]
+ 				-c.getCoordinates()[1]);
+ 	}
+
+	
+/*	rewardToVisit(Cell c) function returns the postion of the smallest reward
+ */
+	private int rewardToVisit(Cell c)
+	{
+		int minDistance = bigNumber;
+		int minDistaneRewardPos = 0;
+		for (int i = 0;  i < rewards.size(); ++i)
+		{
+			int distanceToReward = manhattanDistance(c, rewards.get(i).getCell());
+			if (distanceToReward < minDistance)
+			{
+				minDistance = distanceToReward;
+				minDistaneRewardPos = i;
+			}
+		}
+		
+		return minDistaneRewardPos;
+	}
+	
  	public int getX()
  	{
  		return currentCell.getCell().getCoordinates()[0];

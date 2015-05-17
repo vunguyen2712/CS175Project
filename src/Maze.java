@@ -158,7 +158,7 @@ public class Maze {
 		//Create the monsters and agent
 		setMonsters(mazeWidth, mazeHeight);
 		setRewards(mazeWidth, mazeHeight);
-		agent = new Agent(entrance, exit);
+		agent = new Agent(entrance, exit, rewards);
 		getEntrance().setEntrance(agent);
 	}
 	
