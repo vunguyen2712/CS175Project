@@ -34,6 +34,10 @@ import java.util.Stack;
  		//visitedCells = new Stack<Cell>();
  		this.exit = exit;
  		this.rewards = rewards;
+ 		for (int i=0; i < this.rewards.size(); ++i)
+ 		{
+ 			System.out.println("Cell " +  rewards.get(i).getCell() + "--- value: " + rewards.get(i).getValue());
+ 		}
  		rewardsLeft = rewards.size();
  		
 		path = new Stack<AStarCell>();
