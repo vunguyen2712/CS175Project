@@ -1,10 +1,10 @@
-package src;
+
 
 import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import src.Logging.Log;
+import Logging.Log;
 
 
 public class MazeSolver {
@@ -16,6 +16,7 @@ public class MazeSolver {
 	{
 		Maze maze = new Maze(15,15);
 		Window window = new Window(maze);
+		int score = 0;
 		
 		//Scanner sc = new Scanner(System.in);
 		//sc.nextLine();
@@ -43,6 +44,12 @@ public class MazeSolver {
 				window.render();
 				//Detect monsters Catching Agent
 				maze.detectCatches();
+				Reward temp = maze.checkRewards();
+				if(!(temp == null))
+				{
+					score = score + temp.getValue();
+					agent.collectReward(temp.getCell());
+				}
 				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 				//agent.printStack();
 				//agent.printnextMoves();
@@ -62,6 +69,7 @@ public class MazeSolver {
 				Log.Log("Success", version);
 
 			System.out.println("Solved!");
+			System.out.println("Score - " + score);
 		}
 		catch (CaughtException e)
 		{

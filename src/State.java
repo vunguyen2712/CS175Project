@@ -1,4 +1,3 @@
-package src;
 
 public class State {
 	public int agent_x;

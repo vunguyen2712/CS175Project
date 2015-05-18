@@ -1,4 +1,3 @@
-package src;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -358,6 +357,21 @@ public class Maze {
 			rewards.add(temp);
 			maze[randomX][randomY].setReward(temp);
 		}
+	}
+	
+	public Reward checkRewards()
+	{
+		Reward reward = null;
+		for(Reward r: rewards)
+		{
+			if(agent.getCurrentCell().equals(r.getCell()))
+			{
+				Cell c = r.getCell();
+				c.collectReward();
+				reward = r;
+			}
+		}
+		return reward;
 	}
 	
 	public Cell getEntrance()

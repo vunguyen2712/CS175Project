@@ -1,4 +1,3 @@
-package src;
 
 import java.util.ArrayList;
 
@@ -216,6 +215,11 @@ public class Cell {
 		{
 			return false;
 		}
+	}
+	
+	public void collectReward()
+	{
+		hasReward = false;
 	}
 	
 	@Override

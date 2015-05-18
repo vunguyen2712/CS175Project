@@ -1,9 +1,8 @@
-package src;
 
 public class Reward {
 
-	Cell cell;
-	int value;
+	private Cell cell;
+	private int value;
 	
 	public Reward(Cell cell, int value)
 	{

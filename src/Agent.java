@@ -1,7 +1,8 @@
-package src;
+
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.Stack;
  
  
@@ -68,39 +69,6 @@ import java.util.Stack;
  			MazeSolver.done = true;
  		}
  	}
-	/*@Override
- 	public void calculateNextMove() {
- 		//For each unvisited neighbor, calculate the distance to the goal node
- 		//For now, the cost to go to that node is constant
- 		//Take the path with the samllest value
- 		//If no unvisited neighbors, go back to the last visited node
- 		int bigNumber = 1000000000;
- 		int minValue = bigNumber;
- 		Cell minCell = exit;
- 		for (Cell neighbor : currentCell.getNeighbors())
- 		{
- 			if(!neighbor.aStarVisited())
- 			{
- 			int temp = manhattanDistance(neighbor);
- 			if(temp < minValue)
- 			{
- 				minCell = neighbor;
- 				minValue = temp;
- 			}
- 			}
- 		}
- 		
- 		if(minValue == bigNumber)
- 		{
- 			visitedCells.pop();
- 			minCell = visitedCells.pop();
- 
- 			minCell.printCoords();
- 		}
- 		
- 		nextCell = minCell;
- 		visitedCells.push(nextCell);
-+	}*/
 	
  	@Override
 	public Cell calculateNextMove() 
@@ -108,7 +76,8 @@ import java.util.Stack;
 	{
 		//To detect if the agent will move to a cell with a monster on it, check if the nextCell has a 
 		//monster in it
-
+ 		try
+ 		{
 		nextCell = path.pop();
  		Cell fallbackCell = nextCell.getCell();
  		try
@@ -193,6 +162,14 @@ import java.util.Stack;
  				return entrance.getCell();
  			return fallbackCell;
  		}
+ 		}
+ 		//Reached a reward
+ 		catch (EmptyStackException e)
+ 		{
+ 			recalculatePathThroughMaze();
+ 			nextCell = path.pop();
+ 			return nextCell.getCell();
+ 		}
 	}
 	
 	public void calculatePathThroughMaze()
@@ -200,6 +177,7 @@ import java.util.Stack;
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
+		Cell goal = calculateGoal();
 		
 		//Initialize aStarFunction
 		
@@ -211,7 +189,7 @@ import java.util.Stack;
 			Cell tempCell = temp.get(i);
 			if(!searchedCells.contains(temp.get(i)))
 			{
-			int cost = calculateCellDistance(tempCell);
+			int cost = calculateCellDistance(tempCell, goal);
 			
 			possibleCells.add(new AStarCell(tempCell, entrance , cost, 0));
 			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
@@ -235,7 +213,7 @@ import java.util.Stack;
 		//System.out.println(possibleCells.size());
 		searchedCells.add(min);
 		possibleCells.remove(min);
-		if(min.equals(exit))
+		if(min.equals(goal))
 		{
 			pathFound = true;
 			AStarCell tempCell = min;
@@ -268,7 +246,7 @@ import java.util.Stack;
 				Cell tempCell = temp.get(i);
 				if(!searchedCells.contains(temp.get(i)))
 				{
-				int cost = calculateCellDistance(tempCell);
+				int cost = calculateCellDistance(tempCell, goal);
 				
 				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
 				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
@@ -294,7 +272,7 @@ import java.util.Stack;
 			possibleCells.remove(min);
 			searchedCells.add(min);
 			
-			if(min.equals(exit))
+			if(min.equals(goal))
 			{
 				//System.out.println("Found");
 				pathFound = true;
@@ -328,6 +306,7 @@ import java.util.Stack;
 		{
 			
 		}*/
+		Cell goal = calculateGoal();
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
@@ -346,7 +325,7 @@ import java.util.Stack;
 			Cell tempCell = temp.get(i);
 			if(!searchedCells.contains(temp.get(i)))
 			{
-			int cost = calculateCellDistance(tempCell);
+			int cost = calculateCellDistance(tempCell, goal);
 			
 			possibleCells.add(new AStarCell(tempCell, startingPoint , cost, 0));
 			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
@@ -371,6 +350,23 @@ import java.util.Stack;
 		searchedCells.add(min);
 		possibleCells.remove(min);
 
+		if(min.equals(goal))
+		{
+			//System.out.println("Found");
+			pathFound = true;
+			AStarCell tempCell = min;
+			
+			//Trace back your steps, adding each step to the path stack
+			while(!tempCell.equals(startingPoint))
+			{
+			path.push(tempCell);
+			
+			//aStarPath.push(tempCell);
+			
+			tempCell = tempCell.getParentCell();
+			}
+			//System.out.println("Path found!");
+		}
 		while(!pathFound)
 		{
 			//System.out.println(iteration);
@@ -389,7 +385,7 @@ import java.util.Stack;
 				Cell tempCell = temp.get(i);
 				if(!searchedCells.contains(temp.get(i)))
 				{
-				int cost = calculateCellDistance(tempCell);
+				int cost = calculateCellDistance(tempCell, goal);
 				
 				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
 				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
@@ -415,7 +411,7 @@ import java.util.Stack;
 			possibleCells.remove(min);
 			searchedCells.add(min);
 			
-			if(min.equals(exit))
+			if(min.equals(goal))
 			{
 				//System.out.println("Found");
 				pathFound = true;
@@ -437,12 +433,12 @@ import java.util.Stack;
 		
 	}
 	
-	private int calculateCellDistance(Cell c)
+	private int calculateCellDistance(Cell c, Cell goal)
 	{
 		int pathCost = cellCost;
 		
-		int nextRewardPos= rewardToVisit(c);
-		int heuristic = manhattanDistance(c, rewards.get(nextRewardPos).getCell());
+		//int nextRewardPos= rewardToVisit(c);
+		int heuristic = manhattanDistance(c, goal);
 		
 //		int heuristic = manhattanDistance(c);
 		if(c.hasMonster())
@@ -453,6 +449,25 @@ import java.util.Stack;
 			pathCost = pathCost++;
 		
 		return pathCost + heuristic;
+	}
+	
+	private Cell calculateGoal()
+	{
+		Cell c = currentCell.getCell();
+		Cell goalCell;
+		if(rewards.size() > 0)
+		{
+		int closestRewardIndex = rewardToVisit(c);
+		Cell closestReward = rewards.get(closestRewardIndex).getCell();
+		goalCell = closestReward;
+		System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+		}
+		else
+		{
+			System.out.println("goal cell = exit");
+			goalCell = exit;
+		}
+		return goalCell;
 	}
 	
 	private int manhattanDistance(Cell c)
@@ -485,6 +500,19 @@ import java.util.Stack;
 		}
 		
 		return minDistaneRewardPos;
+	}
+	
+	public void collectReward(Cell c)
+	{
+		Iterator<Reward> iter = rewards.iterator();
+
+		while (iter.hasNext()) {
+		    Reward r = iter.next();
+
+		    if (r.getCell().equals(c))
+		        iter.remove();
+		}
+		
 	}
 	
  	public int getX()

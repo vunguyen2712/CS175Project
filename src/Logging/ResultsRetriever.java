@@ -1,4 +1,4 @@
-package src.Logging;
+package Logging;
 
 public class ResultsRetriever {
 
