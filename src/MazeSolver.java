@@ -10,11 +10,17 @@ import Logging.Log;
 public class MazeSolver {
 
 	public static boolean done = false;
-	public static boolean debugRun = false;
+	private static boolean debugRun = true;
 	static String version = "1.7";
+
+	public static int mazeSize = 15;
+	public static int hardCap = mazeSize * 5;
+	public static int move = 1;
+	
 	public static void main(String[] args)
 	{
-		Maze maze = new Maze(15,15);
+		System.out.println(hardCap);
+		Maze maze = new Maze(mazeSize,mazeSize);
 		Window window = new Window(maze);
 		int score = 0;
 		
@@ -34,6 +40,7 @@ public class MazeSolver {
 		//Game loop, done is set to true when exit is reached
 		try
 		{
+			//while(!done && move <= hardCap)
 			while(!done)
 			{
 				//Calculate where to go next
@@ -50,6 +57,8 @@ public class MazeSolver {
 					score = score + temp.getValue();
 					agent.collectReward(temp.getCell());
 				}
+				move++;
+				System.out.println(move);
 				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 				//agent.printStack();
 				//agent.printnextMoves();

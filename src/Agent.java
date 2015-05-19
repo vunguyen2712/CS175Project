@@ -19,6 +19,9 @@ import java.util.Stack;
 	private Stack<AStarCell> path;
 	private int cellCost = 1;
 	private AStarCell entrance;
+	private Cell currentGoal;
+	private Cell nearestReward;
+	private boolean headToExit;
 	
 	private final int  bigNumber = 1000000;
 	
@@ -45,6 +48,9 @@ import java.util.Stack;
 		
 		this.entrance = new AStarCell(entrance, null, 0, 0);
 		currentCell = this.entrance;
+		currentGoal = exit;
+		nearestReward = calculateGoal();
+		headToExit = false;
 		
 		//previousMoves = new Stack<Cell>();
 		//lastMove = entrance;
@@ -76,6 +82,16 @@ import java.util.Stack;
 	{
 		//To detect if the agent will move to a cell with a monster on it, check if the nextCell has a 
 		//monster in it
+
+ 		int pathToExit = pathToExit();
+ 		int timeLeft = MazeSolver.hardCap - MazeSolver.move;
+ 		
+ 		if(timeLeft < pathToExit + 10 && !headToExit)
+ 		{
+ 			System.out.println("time to head for the exit");
+ 			headToExit = true;
+ 			recalculatePathThroughMaze();
+ 		}
  		try
  		{
 		nextCell = path.pop();
@@ -178,6 +194,7 @@ import java.util.Stack;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
 		Cell goal = calculateGoal();
+		currentGoal = goal;
 		
 		//Initialize aStarFunction
 		
@@ -306,11 +323,13 @@ import java.util.Stack;
 		{
 			
 		}*/
+		
 		Cell goal = calculateGoal();
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
 		path = new Stack<AStarCell>();
+		currentGoal = goal;
 		
 		
 		//Initialize aStarFunction
@@ -455,7 +474,8 @@ import java.util.Stack;
 	{
 		Cell c = currentCell.getCell();
 		Cell goalCell;
-		if(rewards.size() > 0)
+		if(rewards.size() > 0 && !headToExit)
+		//if(rewards.size() > 0)
 		{
 		int closestRewardIndex = rewardToVisit(c);
 		Cell closestReward = rewards.get(closestRewardIndex).getCell();
@@ -482,6 +502,10 @@ import java.util.Stack;
  				-c.getCoordinates()[1]);
  	}
 
+	private int pathToExit()
+	{
+		return manhattanDistance(currentCell.getCell());
+	}
 	
 /*	rewardToVisit(Cell c) function returns the postion of the closest reward
  */
