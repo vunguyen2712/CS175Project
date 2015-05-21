@@ -480,6 +480,7 @@ public class Maze {
 			{
 				System.out.println("( " + m.getCurrentCell().getCoordinates()[0] + ", " + m.getCurrentCell().getCoordinates()[1] + ")");
 				System.out.println("( " + m.getLastCell().getCoordinates()[0] + ", " + m.getLastCell().getCoordinates()[1] + ")");
+				agent.caught();
 				throw new CaughtException("Caught");
 			}
 		}

@@ -44,6 +44,7 @@ public class Window {
 			for(int i = 0; i < width; i++){
 	        	for(int j = 0; j < height; j++){
 	        		Cell c = maze.getMaze()[j][i];
+
 	        		if(c == maze.getEntrance()){
 	        			g2d.setColor(Color.GREEN);
 	        			g2d.fillRect(x, y, cellSize, cellSize);
@@ -53,19 +54,32 @@ public class Window {
 	        			g2d.fillRect(x, y, cellSize, cellSize);
 	        		}
 	        		if(c.hasReward()){
-        				g2d.setColor(Color.ORANGE);
-        				g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
+        				g2d.setColor(new Color(0xe59400));
+        				int[] xc = {x+cellSize/2, x+cellSize, x+cellSize/2, x};
+        				int[] yc = {y, y+cellSize/2, y+cellSize, y+cellSize/2};
+        				g2d.fillPolygon(xc, yc, 4);
 	        		}
 	        		if(c.isOccupied())
 	        		{
 	        			if(c.getCreature() instanceof Agent){
+	        				
+	        				g2d.setColor(new Color(0xc1c0c0));
+	        				Cell m = maze.getAgent().getNextCell();
+	        				g2d.drawRect((m.getCoordinates()[0]+1)*cellSize+2, (m.getCoordinates()[1]+1)*cellSize+2, cellSize-4, cellSize-4);
+	        				for(Cell n : maze.getAgent().getNextCell().getNeighbors()){
+	    	        			g2d.drawRect((n.getCoordinates()[0]+1)*cellSize+2, (n.getCoordinates()[1]+1)*cellSize+2, cellSize-4, cellSize-4);
+	    	        		}
+	    	        		
 	        				g2d.setColor(Color.YELLOW);
 	        			}
 	        			else if(c.getCreature() instanceof Monster){
 	        				g2d.setColor(Color.BLUE);
 	        			}
-	 
-	        			g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
+	        			if(c.getCreature() instanceof Monster && c == maze.getAgent().getCurrentCell()){
+	        				g2d.fillOval(x, y, cellSize, cellSize);
+	        			}
+	        			else
+	        				g2d.fillOval(x+cellSize/8, y+cellSize/8, 3*cellSize/4, 3*cellSize/4);
 	        		
 	        		}
 	        		g2d.setColor(Color.BLACK);
