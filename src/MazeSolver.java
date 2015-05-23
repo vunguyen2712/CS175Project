@@ -33,7 +33,7 @@ public class MazeSolver {
 		Agent agent = maze.getAgent();
 		agent.calculatePathThroughMaze();
 		try {
-			TimeUnit.MILLISECONDS.sleep(500);
+			TimeUnit.MILLISECONDS.sleep(400);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -69,7 +69,7 @@ public class MazeSolver {
 				System.out.println();
 				*/
 				try {
-					TimeUnit.MILLISECONDS.sleep(500);
+					TimeUnit.MILLISECONDS.sleep(400);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

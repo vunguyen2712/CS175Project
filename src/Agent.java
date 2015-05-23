@@ -628,5 +628,17 @@ import java.util.Stack;
  	{
  		return currentCell.getCell();
  	}
+ 	
+ 	public Cell getNextCell()
+ 	{
+ 		if(!path.empty())
+ 			return path.peek().getCell();
+ 		return getCurrentCell();
+ 	}
+ 	
+ 	public void caught(){
+ 		currentCell.getCell().moveCreatureOutOfCell(this);
+ 		currentCell = new AStarCell(lastMove, currentCell, 0, 0);
+ 	}
  
  }
