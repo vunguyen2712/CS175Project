@@ -1,4 +1,4 @@
-
+package src;
 public class AStarCell {
 
 	private Cell cell;
@@ -19,6 +19,10 @@ public class AStarCell {
 	public Cell getCell()
 	{
 		return cell;
+	}
+	public void setCell(Cell c)
+	{
+		cell = c;
 	}
 	
 	public AStarCell getParentCell()

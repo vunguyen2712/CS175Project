@@ -1,4 +1,4 @@
-
+package src;
 public abstract class Moveable {
 	
 	public abstract void move();

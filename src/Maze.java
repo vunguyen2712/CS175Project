@@ -1,3 +1,4 @@
+package src;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -65,7 +66,7 @@ public class Maze {
 		//The Offset is the x or y value of the start/end, depending if it on the left/right or top/bottom
 		int startOffset;
 		int maxCycles;
-		int amountOfCyclesInMaze = 0;
+//		int amountOfCyclesInMaze = 0;
 		
 		if(mazeWidth <= mazeHeight)
 		{
@@ -273,7 +274,7 @@ public class Maze {
 				neighbor.visitNeighbor(currentCell);
 				currentCell.visitNeighbor(neighbor);
 				amountOfCyclesInMaze++;
-				currentCell.setImportance(5);
+				currentCell.setImportance(10);
 				amountOfStepsSinceLastCycle = 0;
 				createMaze(neighbor, maxCycles, amountOfCyclesInMaze, amountOfStepsSinceLastCycle);
 			}

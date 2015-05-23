@@ -1,4 +1,4 @@
-
+package src;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -14,7 +14,6 @@ import java.util.Stack;
  	// visible items
  	private Cell exit;
  	private ArrayList<Reward> rewards;
- 	private int rewardsLeft;
  	
 	private Stack<AStarCell> path;
 	private int cellCost = 1;
@@ -40,9 +39,8 @@ import java.util.Stack;
  		this.rewards = rewards;
  		for (int i=0; i < this.rewards.size(); ++i)
  		{
- 			System.out.println("Cell " +  rewards.get(i).getCell() + "--- value: " + rewards.get(i).getValue());
+ 			System.out.println("goal Cell = (" + rewards.get(i).getCell().getCoordinates()[0] + "," + rewards.get(i).getCell().getCoordinates()[1]+")" + "--- value: " + rewards.get(i).getValue());
  		}
- 		rewardsLeft = rewards.size();
  		
 		path = new Stack<AStarCell>();
 		
@@ -76,7 +74,7 @@ import java.util.Stack;
  		}
  	}
 	
- 	@Override
+ 	@Override	
 	public Cell calculateNextMove() 
 	throws EmptyStackException
 	{
@@ -94,8 +92,8 @@ import java.util.Stack;
  		}
  		try
  		{
-		nextCell = path.pop();
- 		Cell fallbackCell = nextCell.getCell();
+			nextCell = path.pop();
+	 		Cell fallbackCell = nextCell.getCell();
  		try
  		{
  			//Calculate if a monster is in one of the neighboring cells of nextCell
@@ -108,67 +106,66 @@ import java.util.Stack;
 		}		
 		if(nextCell.getCell().hasMonster() || monstersInNeighbors)
 		{
- 		if(!recalculatedLastTime)
- 		{
-		//aStarPath.pop();
+	 		if(!recalculatedLastTime)
+	 		{
+				//aStarPath.pop();
+		
+				recalculatePathThroughMaze();
+				recalculatedLastTime = true;
+				//System.out.println("recalculated");
+				
+				monstersInNeighbors = false;
+				for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
+				{
+					Cell temp = nextCell.getCell().getNeighbors().get(i);
+					if(temp.hasMonster())
+						monstersInNeighbors =  true;
+				}
+				//Path would still lead to agent being caught
+				if(nextCell.getCell().hasMonster() || monstersInNeighbors || nextCell.equals(fallbackCell))
+				{
+					//moveBackOneCell ----- To avoid the monster
+					calculateMoveWhenMonsterInFront();
 
-		recalculatePathThroughMaze();
-		recalculatedLastTime = true;
-		//System.out.println("recalculated");
-		
-		monstersInNeighbors = false;
-		for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
-		{
-			Cell temp = nextCell.getCell().getNeighbors().get(i);
-			if(temp.hasMonster())
-				monstersInNeighbors =  true;
-		}
-		//Path would still lead to agent being caught
-		if(nextCell.getCell().hasMonster() || monstersInNeighbors || nextCell.equals(fallbackCell))
-		{
-			//moveBackOneCell ----- To avoid the monster
-			calculateMoveWhenMonsterInFront();
-		}
-		else{
-		
- 		//previousCells.push(currentCell);
- 		//lastMove = currentCell;
-		}
- 		}
- 		else
- 		{
- 			recalculatedLastTime = false;
- 			recalculatePathThroughMaze();
- 			
- 			monstersInNeighbors = false;
- 			/*if(nextCell.hasMonster() || monstersInNeighbors)
- 			{
- 				recalculatePathThroughMaze();
- 				recalculatedLastTime = true;
- 				System.out.println("recalculated");
- 			}*/
- 			
- 			monstersInNeighbors = false;
- 			for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
- 			{
- 				Cell temp = nextCell.getCell().getNeighbors().get(i);
- 				if(temp.hasMonster())
- 					monstersInNeighbors =  true;
- 			}
- 			
- 			if(nextCell.getCell().hasMonster() || monstersInNeighbors)
- 			{
- 				//moveBackOneCell ----- To avoid the monster
- 				calculateMoveWhenMonsterInFront();
- 				/*if(nextCell.equals(lastMove))
- 				{
- 					nextCell = previousMoves.pop();
- 				}*/
- 			}
- 			else
- 				nextCell = path.pop();
- 			//previousCells.push(currentCell);
- 		}
+					
+				}
+				else{
+				
+		 		//previousCells.push(currentCell);
+		 		//lastMove = currentCell;
+				}
+	 		}
+	 		else
+	 		{
+	 			recalculatedLastTime = false;
+	 			recalculatePathThroughMaze();
+	 			
+	 			monstersInNeighbors = false;
+	 			/*if(nextCell.hasMonster() || monstersInNeighbors)
+	 			{
+	 				recalculatePathThroughMaze();
+	 				recalculatedLastTime = true;
+	 				System.out.println("recalculated");
+	 			}*/
+	 			
+	 			monstersInNeighbors = false;
+	 			for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
+	 			{
+	 				Cell temp = nextCell.getCell().getNeighbors().get(i);
+	 				if(temp.hasMonster())
+	 					monstersInNeighbors =  true;
+	 			}
+	 			
+	 			if(nextCell.getCell().hasMonster() || monstersInNeighbors)
+	 			{
+	 				//moveBackOneCell ----- To avoid the monster
+	 				calculateMoveWhenMonsterInFront();
+
+	 			}
+	 			else
+	 				nextCell = path.pop();
+	 			//previousCells.push(currentCell);
+	 		}
 		}
 		return nextCell.getCell();
  		}
@@ -477,10 +474,10 @@ import java.util.Stack;
 		if(rewards.size() > 0 && !headToExit)
 		//if(rewards.size() > 0)
 		{
-		int closestRewardIndex = rewardToVisit(c);
-		Cell closestReward = rewards.get(closestRewardIndex).getCell();
-		goalCell = closestReward;
-		System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+			int closestRewardIndex = rewardToVisit(c);
+			Cell closestReward = rewards.get(closestRewardIndex).getCell();
+			goalCell = closestReward;
+			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
 		}
 		else
 		{
@@ -507,7 +504,7 @@ import java.util.Stack;
 		return manhattanDistance(currentCell.getCell());
 	}
 	
-/*	rewardToVisit(Cell c) function returns the postion of the closest reward
+/*	rewardToVisit(Cell c) function returns the index of the closest reward
  */
 	private int rewardToVisit(Cell c)
 	{
@@ -536,7 +533,6 @@ import java.util.Stack;
 		    if (r.getCell().equals(c))
 		        iter.remove();
 		}
-		
 	}
 	
  	public int getX()
@@ -562,6 +558,8 @@ import java.util.Stack;
  		System.out.println("");
  	}
  	
+/* 	calculateMoveWhenMonsterInFront() moves the agent back 1 move when a monster is in the front
+ */
  	private void calculateMoveWhenMonsterInFront()
  	{
 		if(!currentCell.equals(entrance))
@@ -574,6 +572,38 @@ import java.util.Stack;
 		{
 			nextCell = currentCell;
 		}
+ 	}
+/* 	moveToEmptyCell(Cell c) avoid monster in front by moving to a cell without monster (not just moving back)
+ *  This gives the agent more options to avoid monsters
+ */
+ 	private void moveToEmptyCell(Cell c)
+ 	{
+		if(!currentCell.equals(entrance))
+		{
+			nextCell.setCell(c);
+			path.push(currentCell);
+			recalculatedLastTime = true;
+		}
+		else
+		{
+			nextCell = currentCell;
+		}
+ 	}
+ 
+/* 	findSafeNeighbor() avoid monster in front by moving to a safeCell
+ *  This gives the agent more options to avoid monsters
+ */
+ 	private Cell findSafeNeighbor()
+ 	{
+ 		Cell safeCell = nextCell.getCell();
+ 		for (int i = 0; i < currentCell.getCell().getNeighbors().size(); i++)
+		{
+			Cell temp = nextCell.getCell().getNeighbors().get(i);
+			if(!temp.hasMonster() && temp.equals(nextCell.getCell()))
+				safeCell = temp;
+		}		
+ 		return safeCell;
+ 		
  	}
  	
  	public void printnextMoves()
