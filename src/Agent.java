@@ -190,7 +190,7 @@ import java.util.Stack;
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
-		Cell goal = calculateGoal();
+		Cell goal = calculateBestGoal();
 		currentGoal = goal;
 		
 		//Initialize aStarFunction
@@ -321,7 +321,7 @@ import java.util.Stack;
 			
 		}*/
 		
-		Cell goal = calculateGoal();
+		Cell goal = calculateBestGoal();
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
@@ -467,6 +467,9 @@ import java.util.Stack;
 		return pathCost + heuristic;
 	}
 	
+/* calculateGoal() returns the closest reward (Cell)
+ * 
+ */
 	private Cell calculateGoal()
 	{
 		Cell c = currentCell.getCell();
@@ -477,6 +480,28 @@ import java.util.Stack;
 			int closestRewardIndex = rewardToVisit(c);
 			Cell closestReward = rewards.get(closestRewardIndex).getCell();
 			goalCell = closestReward;
+			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+		}
+		else
+		{
+			System.out.println("goal cell = exit");
+			goalCell = exit;
+		}
+		return goalCell;
+	}
+
+/* calculateBestGoal() returns the best reward (Cell) - based on reward value / distance
+ * 
+ */
+	private Cell calculateBestGoal()
+	{
+		Cell c = currentCell.getCell();
+		Cell goalCell;
+		if(rewards.size() > 0 && !headToExit)
+		//if(rewards.size() > 0)
+		{
+			int bestRewardIndex = bestRewardToVisit(c);
+			goalCell = rewards.get(bestRewardIndex).getCell();
 			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
 		}
 		else
@@ -521,6 +546,25 @@ import java.util.Stack;
 		}
 		
 		return minDistaneRewardPos;
+	}
+/*	bestRewardToVisit(Cell c) function returns the index of the BEST reward - based on rewardValue / Distance - VoD
+ */
+	private int bestRewardToVisit(Cell c)
+	{
+		int maxVoD = -1;
+		int bestRewardPos = 0;
+		for (int i = 0;  i < rewards.size(); ++i)
+		{
+			int VoD = rewards.get(i).getValue() /  manhattanDistance(c, rewards.get(i).getCell());
+//			System.out.println("VoD " + i + " = " + VoD);
+			if (VoD > maxVoD)
+			{
+				maxVoD = VoD;
+				bestRewardPos = i;
+			}
+		}
+		
+		return bestRewardPos;
 	}
 	
 	public void collectReward(Cell c)
@@ -573,38 +617,7 @@ import java.util.Stack;
 			nextCell = currentCell;
 		}
  	}
-/* 	moveToEmptyCell(Cell c) avoid monster in front by moving to a cell without monster (not just moving back)
- *  This gives the agent more options to avoid monsters
- */
- 	private void moveToEmptyCell(Cell c)
- 	{
-		if(!currentCell.equals(entrance))
-		{
-			nextCell.setCell(c);
-			path.push(currentCell);
-			recalculatedLastTime = true;
-		}
-		else
-		{
-			nextCell = currentCell;
-		}
- 	}
- 
-/* 	findSafeNeighbor() avoid monster in front by moving to a safeCell
- *  This gives the agent more options to avoid monsters
- */
- 	private Cell findSafeNeighbor()
- 	{
- 		Cell safeCell = nextCell.getCell();
- 		for (int i = 0; i < currentCell.getCell().getNeighbors().size(); i++)
-		{
-			Cell temp = nextCell.getCell().getNeighbors().get(i);
-			if(!temp.hasMonster() && temp.equals(nextCell.getCell()))
-				safeCell = temp;
-		}		
- 		return safeCell;
- 		
- 	}
+
  	
  	public void printnextMoves()
  	{
