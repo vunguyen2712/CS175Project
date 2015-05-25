@@ -18,8 +18,8 @@ public class Log {
 	public static void Log(String result, String version)
 	{
 		//Username/password to the database are admin's of your database, could be root and password
-		String username = "testuser";
-		String password = "testpassword";
+		String username = "root";
+		String password = "root";
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		   //get current date time with Date()
@@ -36,7 +36,7 @@ public class Log {
 			BufferedWriter out = null;
 			try  
 			{
-			    FileWriter fstream = new FileWriter("Errors.txt", true); //true tells to append data.
+			    FileWriter fstream = new FileWriter("/Users/VuNguyen/Desktop/test.txt", true); //true tells to append data.
 			    out = new BufferedWriter(fstream);
 			    out.write(version + " " + date + " " + result + "\n");
 			}

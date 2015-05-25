@@ -551,12 +551,12 @@ import java.util.Stack;
  */
 	private int bestRewardToVisit(Cell c)
 	{
-		int maxVoD = -1;
+		double maxVoD = -1.0;
 		int bestRewardPos = 0;
 		for (int i = 0;  i < rewards.size(); ++i)
 		{
-			int VoD = rewards.get(i).getValue() /  manhattanDistance(c, rewards.get(i).getCell());
-//			System.out.println("VoD " + i + " = " + VoD);
+			double VoD = rewards.get(i).getValue() /  (manhattanDistance(c, rewards.get(i).getCell()) / 1.0);
+//			System.out.println("Value: " + rewards.get(i).getValue() +  " ManahatDis: " +  manhattanDistance(c, rewards.get(i).getCell()) + " VoD " + i + " = " + VoD);
 			if (VoD > maxVoD)
 			{
 				maxVoD = VoD;
