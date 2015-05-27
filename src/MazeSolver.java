@@ -1,10 +1,9 @@
-package src;
 
 import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import src.Logging.Log;
+import Logging.Log;
 
 
 public class MazeSolver {
