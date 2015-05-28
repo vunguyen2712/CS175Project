@@ -37,7 +37,7 @@ public class Log {
 			{
 			    FileWriter fstream = new FileWriter("Errors.txt", true); //true tells to append data.
 			    out = new BufferedWriter(fstream);
-			    out.write(version + " " + date + " " + result + "\n");
+			    out.write(version + " " + date + " " + result + " " + score +"\n");
 			}
 			catch (IOException ee)
 			{
