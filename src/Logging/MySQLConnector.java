@@ -20,13 +20,14 @@ public class MySQLConnector {
 		connection = DriverManager.getConnection("jdbc:mysql:///cs175",username, password);
 	}
 	
-	public void insertResult(String version, String date, String result) throws SQLException
+	public void insertResult(String version, String date, String result, int score) throws SQLException
 	{
 		Statement update = connection.createStatement();
 			String sqlCommand = "INSERT INTO results VALUES ('"
 					+ version + "','" 
 					+ result + "','"
-					+ date + "')";
+					+ date + "','"
+					+ score + "')";
 			update.executeUpdate(sqlCommand);
 	}
 	
@@ -38,9 +39,12 @@ public class MySQLConnector {
 			int numberOfSuccess =0;
 			int totalRuns =0;
 			String versionNumber = "1." + i;
+
+			int totalScore = 0;
+			double avgScore = 0.0;
 			
 			Statement collect = connection.createStatement();
-			String sqlCommand = "SELECT result FROM results WHERE version = " + versionNumber;
+			String sqlCommand = "SELECT result, score FROM results WHERE version = " + versionNumber;
 			
 			results = collect.executeQuery(sqlCommand);
 			
@@ -48,13 +52,22 @@ public class MySQLConnector {
 			{
 				totalRuns++;
 				String res = results.getString(1);
+				String score = results.getString(2);
 				if (res.equals("Success"))
+				{
 					numberOfSuccess++;
+			    	if(!results.wasNull())
+			    	{
+			    	   totalScore = totalScore + Integer.parseInt(score);
+			    	}
+				}
+				
 			}
 			
 			
 			String file = "Errors.txt";
 			BufferedReader br;
+
 			try {
 				br = new BufferedReader(new FileReader(file));
 			    String line;
@@ -62,11 +75,24 @@ public class MySQLConnector {
 			       String[] split = line.split(" ");
 			       String res = split[3];
 			       String vers = split[0];
+			       String score;
+			       if(split.length == 5)
+			       {
+			       score = split[4];
+			       }
+			       else
+			       {
+			    	   score = "0";
+			       }
 			       if(vers.equals(versionNumber))
 			       {
 			       totalRuns++;
 			       if (res.equals("Success"))
+			       {
 			    	   numberOfSuccess++;
+			    	   totalScore = totalScore + Integer.parseInt(score);
+			       }
+			 
 			       }
 			    }
 			    br.close();
@@ -78,8 +104,9 @@ public class MySQLConnector {
 				e.printStackTrace();
 			}
 			int percent = (numberOfSuccess * 100) / totalRuns;
+			avgScore = totalScore/numberOfSuccess;
 			System.out.println("Version Number: 1." + i + "   Success: " + numberOfSuccess + "    Total Runs : "
-					+ totalRuns + "     Percentage of Success: " + percent + "%");
+					+ totalRuns + "     Percentage of Success: " + percent + "%" + "    Avg Score: " + avgScore);
 			System.out.println("--------------------------------");
 			
 		}

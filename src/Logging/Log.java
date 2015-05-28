@@ -14,11 +14,11 @@ public class Log {
 	//Scema for the database is a database name cs175, 
 	// Table is called results(version VARCHAR(200), result VARCHAR(20), date, VARCHAR(200), PRIMARY KEY (date))
 
-	public static void Log(String result, String version)
+	public static void Log(String result, String version, int score)
 	{
 		//Username/password to the database are admin's of your database, could be root and password
-		String username = "root";
-		String password = "root";
+		String username = "testuser";
+		String password = "testpassword";
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		   //get current date time with Date()
@@ -28,14 +28,14 @@ public class Log {
 		try
 		{
 		MySQLConnector c = new MySQLConnector(username,password);
-		c.insertResult(version, date, result);
+		c.insertResult(version, date, result, score);
 		}
 		catch (Exception e)
 		{
 			BufferedWriter out = null;
 			try  
 			{
-			    FileWriter fstream = new FileWriter("/Users/VuNguyen/Desktop/test.txt", true); //true tells to append data.
+			    FileWriter fstream = new FileWriter("Errors.txt", true); //true tells to append data.
 			    out = new BufferedWriter(fstream);
 			    out.write(version + " " + date + " " + result + "\n");
 			}

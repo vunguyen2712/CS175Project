@@ -1,1 +1,4 @@
-Working on changing path to ASTARCELL - then JUST use previousCells();
+V1.8 - closest neighbor
+V1.9 - VoD
+V1.10 - Clustering
+V1.11 - farthest reward

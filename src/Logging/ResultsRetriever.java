@@ -6,7 +6,7 @@ public class ResultsRetriever {
 	{
 		String username = "testuser";
 		String password = "testpassword";
-		int versionNumber = 7;
+		int versionNumber = 11;
 		try
 		{
 		MySQLConnector c = new MySQLConnector(username,password);
@@ -14,6 +14,7 @@ public class ResultsRetriever {
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			System.out.println("Error, please try again");
 		}
 		

@@ -10,10 +10,10 @@ public class MazeSolver {
 
 	public static boolean done = false;
 	private static boolean debugRun = true;
-	static String version = "1.7";
+	static String version = "1.11";
 
 	public static int mazeSize = 15;
-	public static int hardCap = mazeSize * 5;
+	public static int hardCap = mazeSize * 10;
 	public static int move = 1;
 	
 	public static void main(String[] args)
@@ -32,15 +32,22 @@ public class MazeSolver {
 		Agent agent = maze.getAgent();
 		agent.calculatePathThroughMaze();
 		try {
-			TimeUnit.MILLISECONDS.sleep(400);
+			if(!debugRun)
+			{TimeUnit.MILLISECONDS.sleep(00);
+			}
+			else
+			{
+
+				TimeUnit.MILLISECONDS.sleep(400);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		//Game loop, done is set to true when exit is reached
 		try
 		{
-			//while(!done && move <= hardCap)
-			while(!done)
+			while(!done && (move <= hardCap))
+			//while(!done)
 			{
 				//Calculate where to go next
 				maze.calculateNextMove();
@@ -57,7 +64,10 @@ public class MazeSolver {
 					agent.collectReward(temp.getCell());
 				}
 				move++;
-				System.out.println(move);
+				if(move > hardCap)
+				{
+					throw new CaughtException("Cap");
+				}
 				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 				//agent.printStack();
 				//agent.printnextMoves();
@@ -68,25 +78,40 @@ public class MazeSolver {
 				System.out.println();
 				*/
 				try {
-					TimeUnit.MILLISECONDS.sleep(400);
+					if(!debugRun)
+					{TimeUnit.MILLISECONDS.sleep(00);
+					}
+					else
+					{
+
+						TimeUnit.MILLISECONDS.sleep(400);
+					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 			if(!debugRun)
-				Log.Log("Success", version);
+				Log.Log("Success", version, score);
 
 			System.out.println("Solved!");
 			System.out.println("Score - " + score);
 		}
 		catch (CaughtException e)
 		{
+			if(e.getMessage().equals("Cap"))
+				{
+					System.out.println("Hard cap was reached");
+				}
+			else
+			{
+				System.out.println("Agent was caught!");
+				System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
+				System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
+			
+			}
 			if(!debugRun)
-				Log.Log("Failure", version);
-			System.out.println("Agent was caught!");
-			System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
-			System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
-		
+				Log.Log("Failure", version, score);
+			
 		}
 		//catch (EmptyStackException e)
 		//{
@@ -95,7 +120,7 @@ public class MazeSolver {
 		catch(Exception e)
 		{
 			if(!debugRun)
-				Log.Log("Error", version);
+				Log.Log("Error", version, score);
 			System.out.println("Error - Below is the State -");
 			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();

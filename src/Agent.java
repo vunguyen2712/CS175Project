@@ -20,6 +20,7 @@ import java.util.Stack;
 	private Cell currentGoal;
 	private Cell nearestReward;
 	private boolean headToExit;
+	private Stack<AStarCell> pathToExit;
 	
 	private final int  bigNumber = 1000000;
 	
@@ -29,6 +30,9 @@ import java.util.Stack;
 	//private Stack<AStarCell> previousCells;
 	
 	private boolean recalculatedLastTime = false;
+	
+	private String heuristic;
+	private ArrayList<Reward> nearbyRewards;
  	
  	public Agent(Cell entrance, Cell exit, ArrayList<Reward> rewards)
  	{
@@ -49,8 +53,18 @@ import java.util.Stack;
 		nearestReward = calculateGoal();
 		headToExit = false;
 		
+		pathToExit = new Stack<AStarCell>();
+		calculatePathToExit(entrance);
+		System.out.println(pathToExit());
+		
+		//heuristic = "VoD";
+		//heuristic = "Cluster";
+		heuristic = "Max Distance";
 		//previousMoves = new Stack<Cell>();
 		//lastMove = entrance;
+		
+		
+		nearbyRewards = new ArrayList<Reward>();
 		
 		//previousCells = new Stack<AStarCell>();
 		//previousCells.push(this.entrance);
@@ -66,10 +80,15 @@ import java.util.Stack;
  		nextCell.getCell().moveCreatureIntoCell(this);
  		currentCell = nextCell;
  		currentCell.getCell().aStarVisit();
+ 		calculatePathToExit(nextCell.getCell());
  		
  		if(currentCell.equals(exit))
  		{
  			MazeSolver.done = true;
+ 		}
+ 		if(nearbyRewards.size() > 0 && nearbyRewards.contains(currentCell))
+ 		{
+ 			nearbyRewards.remove(currentCell);
  		}
  	}
 	
@@ -83,7 +102,7 @@ import java.util.Stack;
  		int pathToExit = pathToExit();
  		int timeLeft = MazeSolver.hardCap - MazeSolver.move;
  		
- 		if(timeLeft < pathToExit + 10 && !headToExit)
+ 		if(timeLeft < pathToExit + MazeSolver.mazeSize && !headToExit)
  		{
  			System.out.println("time to head for the exit");
  			headToExit = true;
@@ -96,13 +115,7 @@ import java.util.Stack;
  		try
  		{
  			//Calculate if a monster is in one of the neighboring cells of nextCell
-		boolean monstersInNeighbors = false;
-		for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
-		{
-			Cell temp = nextCell.getCell().getNeighbors().get(i);
-			if(temp.hasMonster())
-				monstersInNeighbors =  true;
-		}		
+		boolean monstersInNeighbors = calculateIfMonsterInNextCell(nextCell);
 		if(nextCell.getCell().hasMonster() || monstersInNeighbors)
 		{
 	 		if(!recalculatedLastTime)
@@ -113,13 +126,7 @@ import java.util.Stack;
 				recalculatedLastTime = true;
 				//System.out.println("recalculated");
 				
-				monstersInNeighbors = false;
-				for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
-				{
-					Cell temp = nextCell.getCell().getNeighbors().get(i);
-					if(temp.hasMonster())
-						monstersInNeighbors =  true;
-				}
+				monstersInNeighbors = calculateIfMonsterInNextCell(nextCell);
 				//Path would still lead to agent being caught
 				if(nextCell.getCell().hasMonster() || monstersInNeighbors || nextCell.equals(fallbackCell))
 				{
@@ -147,13 +154,7 @@ import java.util.Stack;
 	 				System.out.println("recalculated");
 	 			}*/
 	 			
-	 			monstersInNeighbors = false;
-	 			for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
-	 			{
-	 				Cell temp = nextCell.getCell().getNeighbors().get(i);
-	 				if(temp.hasMonster())
-	 					monstersInNeighbors =  true;
-	 			}
+	 			monstersInNeighbors = calculateIfMonsterInNextCell(nextCell);
 	 			
 	 			if(nextCell.getCell().hasMonster() || monstersInNeighbors)
 	 			{
@@ -327,7 +328,6 @@ import java.util.Stack;
 		path = new Stack<AStarCell>();
 		currentGoal = goal;
 		
-		
 		//Initialize aStarFunction
 		
 		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
@@ -448,6 +448,138 @@ import java.util.Stack;
 		
 	}
 	
+	private void calculatePathToExit(Cell nextCell)
+	{
+		if(!headToExit && !nextCell.equals(exit))
+		{
+	
+		//Cell goal = exit;
+		boolean pathFound = false;
+		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
+		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
+		pathToExit = new Stack<AStarCell>();
+		
+		
+		//Initialize aStarFunction
+		
+		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
+		AStarCell startingPoint = currentCell;
+		//aStarPath = new Stack<AStarCell>();
+		searchedCells.add(startingPoint);
+		
+		for(int i = 0; i < temp.size(); i++)
+		{
+			Cell tempCell = temp.get(i);
+			if(!searchedCells.contains(temp.get(i)))
+			{
+			int cost = calculateCellDistance(tempCell, exit);
+			
+			possibleCells.add(new AStarCell(tempCell, startingPoint , cost, 0));
+			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+			}
+		}
+		//System.out.println(temp.size());
+		
+		//Find the "closest" neighbor
+		AStarCell min = possibleCells.get(0);
+		for(int i = 0; i < possibleCells.size(); i++)
+		{				
+		int costForMin = min.getCost() + min.getHeuristic();
+		int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+		if(costForTempCell < costForMin)
+		{
+			min = possibleCells.get(i);
+				//System.out.println("newMinInInit");
+			}
+		}
+		
+		//System.out.println(possibleCells.size());
+		searchedCells.add(min);
+		possibleCells.remove(min);
+	
+		if(min.equals(exit))
+		{
+			//System.out.println("Found");
+			pathFound = true;
+			AStarCell tempCell = min;
+			
+			//Trace back your steps, adding each step to the path stack
+			while(!tempCell.equals(startingPoint))
+			{
+			pathToExit.push(tempCell);
+			
+			//aStarPath.push(tempCell);
+			
+			tempCell = tempCell.getParentCell();
+			}
+			//System.out.println("Path found!");
+		}
+		while(!pathFound)
+		{
+			//System.out.println(iteration);
+			//get the last cell added to searchedCells
+			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
+			
+			//Add that cell's neighbors to the possibleCellsList
+			
+			temp = mostRecentCell.getCell().getNeighbors();
+			//System.out.println("--------");
+			//System.out.println(temp.size());
+			
+			//repeat, as done in Initialization step
+			for(int i = 0; i < temp.size(); i++)
+			{
+				Cell tempCell = temp.get(i);
+				if(!searchedCells.contains(temp.get(i)))
+				{
+				int cost = calculateCellDistance(tempCell, exit);
+				
+				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
+				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+				}
+			}
+			
+			//System.out.println(possibleCells.size());
+			
+			min = possibleCells.get(0);
+			for(int i = 0; i < possibleCells.size(); i++)
+			{
+				int costForMin = min.getCost() + min.getHeuristic();
+				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+				if(costForTempCell < costForMin)
+				{
+					min = possibleCells.get(i);
+					//System.out.println("new min");
+				}
+				
+				//System.out.println(i);
+			}
+			
+			possibleCells.remove(min);
+			searchedCells.add(min);
+			
+			if(min.equals(exit))
+			{
+				//System.out.println("Found");
+				pathFound = true;
+				AStarCell tempCell = min;
+				
+				//Trace back your steps, adding each step to the path stack
+				while(!tempCell.equals(startingPoint))
+				{
+				pathToExit.push(tempCell);
+				
+				//aStarPath.push(tempCell);
+				
+				tempCell = tempCell.getParentCell();
+				}
+				//System.out.println("Path found!");
+			}
+			//System.out.println("Path NOT found! Keep Trying!");
+		}
+		}
+	}
+	
 	private int calculateCellDistance(Cell c, Cell goal)
 	{
 		int pathCost = cellCost;
@@ -479,36 +611,151 @@ import java.util.Stack;
 			int closestRewardIndex = rewardToVisit(c);
 			Cell closestReward = rewards.get(closestRewardIndex).getCell();
 			goalCell = closestReward;
-			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+			//System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
 		}
 		else
 		{
-			System.out.println("goal cell = exit");
+			//System.out.println("goal cell = exit");
 			goalCell = exit;
 		}
 		return goalCell;
 	}
 
+	/*
+	 * calculateGoalGroups() returns the closest cell to the agent, which is in a tightly packed group 
+	 * (the idea is that the agent should try to go to rewards that collect rewards in rapid succession
+	 */
+	
 /* calculateBestGoal() returns the best reward (Cell) - based on reward value / distance
  * 
  */
 	private Cell calculateBestGoal()
 	{
 		Cell c = currentCell.getCell();
-		Cell goalCell;
+		Cell goalCell = exit;
+		if(heuristic.equals("VoD"))
+		{
 		if(rewards.size() > 0 && !headToExit)
 		//if(rewards.size() > 0)
 		{
 			int bestRewardIndex = bestRewardToVisit(c);
 			goalCell = rewards.get(bestRewardIndex).getCell();
-			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+			//System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
 		}
 		else
 		{
-			System.out.println("goal cell = exit");
+			//System.out.println("goal cell = exit");
 			goalCell = exit;
 		}
+		}
+		
+		
+		
+		else if(heuristic.equals("Cluster"))
+		{
+			if(nearbyRewards.size() == 0 && !headToExit)
+			{
+			//Calculate value based on the neighbors who are near to a cell
+			int clusterValue = 0;
+			Cell bestGoal = exit;
+			for (Reward r : rewards)
+			{
+				try
+				{
+					ArrayList<Reward> temp = search(r.getCell(), 0, new ArrayList<Cell>(), new ArrayList<Reward>());
+					
+					int tempValue = addValue(temp);
+					
+					if(tempValue > clusterValue)
+					{
+						bestGoal = r.getCell();
+						clusterValue = tempValue;
+						nearbyRewards = temp;
+					}
+					else if(tempValue == clusterValue)
+					{
+						int distanceToCurrentBest = manhattanDistance(currentCell.getCell(), bestGoal);
+						int distanceToThisReward = manhattanDistance(currentCell.getCell(), r.getCell());
+						if(distanceToThisReward < distanceToCurrentBest)
+						{
+							bestGoal = r.getCell();
+							clusterValue = tempValue;
+							nearbyRewards = temp;
+						}
+					}
+				}
+				catch (IndexOutOfBoundsException e)
+				{
+					//no path found, ignore this reward
+				}
+			}
+			goalCell = bestGoal;
+			System.out.println(goalCell.printCoords());
+			//nearbyRewards.remove(bestGoal);
+		}
+			else if (headToExit)
+			{
+				goalCell = exit;
+			}
+		else
+		{
+			int bestRewardIndex = bestNearbyRewardToVisit(c);
+			goalCell = nearbyRewards.get(bestRewardIndex).getCell();
+			//nearbyRewards.remove(bestRewardIndex);
+			goalCell.printCoords1();
+		}
+		}
+		
+		
+		
+		else if(heuristic.equals("Max Distance"))
+		{
+			if(headToExit)
+				goalCell = exit;
+			else
+				goalCell = getFarthestReward();
+		}
 		return goalCell;
+	}
+	
+	private int addValue(ArrayList<Reward> rewards)
+	{
+		int returnValue =0;
+		for(Reward r : rewards)
+		{
+			returnValue = returnValue + r.getValue();
+		}
+		return returnValue;
+	}
+	
+	private ArrayList<Reward> search(Cell cell, int depth, ArrayList<Cell> searched, ArrayList<Reward> rewardsInCluster)
+	{
+		int maxDepth = 5;
+		int clusterValue = 0;
+		searched.add(cell);
+		ArrayList<Reward> re = rewardsInCluster;
+		if(depth > maxDepth)
+		{
+			return rewardsInCluster;
+		}
+		else
+		{
+			int d = depth + 1;
+			if(cell.hasReward())
+			{
+				clusterValue = clusterValue + cell.getReward().getValue();
+				re.add(cell.getReward());
+			}
+			
+			for(Cell n : cell.getNeighbors())
+			{
+				if(!searched.contains(n))
+				{
+					re = search(n, d, searched,re);
+				}
+			}
+			return re;
+		}
 	}
 	
 	private int manhattanDistance(Cell c)
@@ -525,7 +772,7 @@ import java.util.Stack;
 
 	private int pathToExit()
 	{
-		return manhattanDistance(currentCell.getCell());
+		return pathToExit.size();
 	}
 	
 /*	rewardToVisit(Cell c) function returns the index of the closest reward
@@ -566,6 +813,48 @@ import java.util.Stack;
 		return bestRewardPos;
 	}
 	
+	private int bestNearbyRewardToVisit(Cell c)
+	{
+		double maxVoD = -1.0;
+		int bestRewardPos = 0;
+		for (int i = 0;  i < nearbyRewards.size(); ++i)
+		{
+			double VoD = nearbyRewards.get(i).getValue() /  (manhattanDistance(c, nearbyRewards.get(i).getCell()) / 1.0);
+//			System.out.println("Value: " + rewards.get(i).getValue() +  " ManahatDis: " +  manhattanDistance(c, rewards.get(i).getCell()) + " VoD " + i + " = " + VoD);
+			if (VoD > maxVoD)
+			{
+				maxVoD = VoD;
+				bestRewardPos = i;
+			}
+		}
+		
+		return bestRewardPos;
+	}
+	
+	private Cell getFarthestReward()
+	{
+		int maxDistance = 0;
+		Cell farthestCell;
+		if(rewards.size()>0)
+		{
+		farthestCell = rewards.get(0).getCell();
+		
+		for(Reward r: rewards)
+		{
+			int distance = manhattanDistance(r.getCell());
+			if(distance > maxDistance)
+			{
+				farthestCell = r.getCell();
+				maxDistance = distance;
+			}
+		}
+		
+		}
+		else
+			farthestCell = exit;
+		return farthestCell;
+	}
+	
 	public void collectReward(Cell c)
 	{
 		Iterator<Reward> iter = rewards.iterator();
@@ -575,6 +864,16 @@ import java.util.Stack;
 
 		    if (r.getCell().equals(c))
 		        iter.remove();
+		}
+		
+		Iterator<Reward> i = nearbyRewards.iterator();
+		while(i.hasNext())
+		{
+			Reward r = i.next();
+			if(r.getCell().equals(c))
+			{
+				i.remove();
+			}
 		}
 	}
 	
@@ -610,11 +909,30 @@ import java.util.Stack;
 		nextCell = currentCell.getParentCell();
 		path.push(currentCell);
 		recalculatedLastTime = true;
+		
+		//Moving back would cause a collision
+		if(calculateIfMonsterInNextCell(nextCell))
+		{
+			nextCell = currentCell;
+		}
 		}
 		else
 		{
 			nextCell = currentCell;
 		}
+ 	}
+ 	
+ 	private boolean calculateIfMonsterInNextCell(AStarCell nextCell)
+ 	{
+ 		boolean monstersInNeighbors = false;
+			for (int i = 0; i < nextCell.getCell().getNeighbors().size(); i++)
+			{
+				Cell temp = nextCell.getCell().getNeighbors().get(i);
+				if(temp.hasMonster())
+					monstersInNeighbors =  true;
+			}
+			
+			return monstersInNeighbors;
  	}
 
  	
@@ -653,4 +971,8 @@ import java.util.Stack;
  		currentCell = new AStarCell(lastMove, currentCell, 0, 0);
  	}
  
+ 	public void removeReward(Reward reward)
+ 	{
+ 		nearbyRewards.remove(reward);
+ 	}
  }

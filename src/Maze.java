@@ -351,7 +351,7 @@ public class Maze {
 				randomY = random.nextInt(mazeHeight);
 				rewardCell = maze[randomX][randomY];
 			}
-			int value = random.nextInt(6);
+			int value = random.nextInt(5) + 1;
 			value = value * 100;
 			Reward temp = new Reward(rewardCell, value);
 			rewards.add(temp);
