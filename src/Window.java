@@ -17,6 +17,11 @@ public class Window {
 	private int x;
 	private int y;
 	
+	private int score;
+	private int moves;
+	private int cap;
+	private String status;
+	
 	public Window(Maze maze)
 	{
 		initializeMaze(maze);
@@ -28,8 +33,12 @@ public class Window {
 		panel = new Panel();
 	}
 	
-	public void render()
+	public void render(int score, int moves, int cap, String status)
 	{
+		this.score = score;
+		this.moves = moves;
+		this.cap = cap;
+		this.status = status;
 		frame.repaint();
 		
         frame.add(panel);
@@ -41,6 +50,10 @@ public class Window {
 		@Override
 		public void paint(Graphics g){
 			Graphics2D g2d = (Graphics2D) g;
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Moves: " + moves+"/"+cap, 0, 10);
+			g2d.drawString("Score: " + score, 0, 23);
+			g2d.drawString("Agent status: " + status, 330, 15);
 			for(int i = 0; i < width; i++){
 	        	for(int j = 0; j < height; j++){
 	        		Cell c = maze.getMaze()[j][i];
@@ -58,6 +71,8 @@ public class Window {
         				int[] xc = {x+cellSize/2, x+cellSize, x+cellSize/2, x};
         				int[] yc = {y, y+cellSize/2, y+cellSize, y+cellSize/2};
         				g2d.fillPolygon(xc, yc, 4);
+        				g2d.setColor(Color.BLACK);
+        				g2d.drawString(c.getReward().getValue()+"", x+cellSize/4, y+5*cellSize/8);
 	        		}
 	        		if(c.isOccupied())
 	        		{

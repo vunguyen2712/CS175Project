@@ -966,6 +966,10 @@ import java.util.Stack;
  		return getCurrentCell();
  	}
  	
+ 	public boolean getHeadToExit(){
+ 		return headToExit;
+ 	}
+ 	
  	public void caught(){
  		currentCell.getCell().moveCreatureOutOfCell(this);
  		currentCell = new AStarCell(lastMove, currentCell, 0, 0);

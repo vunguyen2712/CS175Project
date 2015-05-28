@@ -22,13 +22,13 @@ public class MazeSolver {
 		Maze maze = new Maze(mazeSize,mazeSize);
 		Window window = new Window(maze);
 		int score = 0;
-		
+		String status = "Collecting rewards";
 		//Scanner sc = new Scanner(System.in);
 		//sc.nextLine();
 
 		//Calculate the path to the exit
 
-		window.render();
+		window.render(score, 0, hardCap, status);
 		Agent agent = maze.getAgent();
 		agent.calculatePathThroughMaze();
 		try {
@@ -51,10 +51,12 @@ public class MazeSolver {
 			{
 				//Calculate where to go next
 				maze.calculateNextMove();
+				if(agent.getHeadToExit())
+					status = "Heading toward exit";
 				//Move
 				maze.moveAll();
 				//Display
-				window.render();
+				window.render(score, move, hardCap, status);
 				//Detect monsters Catching Agent
 				maze.detectCatches();
 				Reward temp = maze.checkRewards();
@@ -92,22 +94,26 @@ public class MazeSolver {
 			}
 			if(!debugRun)
 				Log.Log("Success", version, score);
-
+			status = "Exit reached";
+			window.render(score, move, hardCap, status);
 			System.out.println("Solved!");
 			System.out.println("Score - " + score);
 		}
 		catch (CaughtException e)
 		{
 			if(e.getMessage().equals("Cap"))
-				{
-					System.out.println("Hard cap was reached");
-				}
+			{
+				status = "Out of moves";
+				System.out.println("Hard cap was reached");
+				window.render(score, move-1, hardCap, status);
+			}
 			else
 			{
+				status = "Caught";
 				System.out.println("Agent was caught!");
 				System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
 				System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
-			
+				window.render(score, move, hardCap, status);
 			}
 			if(!debugRun)
 				Log.Log("Failure", version, score);
