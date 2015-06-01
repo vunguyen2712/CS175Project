@@ -1,8 +1,10 @@
-
+package src;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Stack;
+import java.util.HashMap;
  
  
  public class Agent extends Moveable{
@@ -57,9 +59,9 @@ import java.util.Stack;
 		calculatePathToExit(entrance);
 		System.out.println(pathToExit());
 		
-		//heuristic = "VoD";
+		heuristic = "VoD";
 		//heuristic = "Cluster";
-		heuristic = "Max Distance";
+//		heuristic = "Max Distance";
 		//previousMoves = new Stack<Cell>();
 		//lastMove = entrance;
 		
@@ -640,7 +642,7 @@ import java.util.Stack;
 		{
 			int bestRewardIndex = bestRewardToVisit(c);
 			goalCell = rewards.get(bestRewardIndex).getCell();
-			//System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
 		}
 		else
 		{
@@ -648,7 +650,6 @@ import java.util.Stack;
 			goalCell = exit;
 		}
 		}
-		
 		
 		
 		else if(heuristic.equals("Cluster"))
@@ -692,18 +693,18 @@ import java.util.Stack;
 			goalCell = bestGoal;
 			System.out.println(goalCell.printCoords());
 			//nearbyRewards.remove(bestGoal);
-		}
+			}
 			else if (headToExit)
 			{
 				goalCell = exit;
 			}
-		else
-		{
-			int bestRewardIndex = bestNearbyRewardToVisit(c);
-			goalCell = nearbyRewards.get(bestRewardIndex).getCell();
-			//nearbyRewards.remove(bestRewardIndex);
-			goalCell.printCoords1();
-		}
+			else
+			{
+				int bestRewardIndex = bestRewardToVisit(c);
+				goalCell = nearbyRewards.get(bestRewardIndex).getCell();
+				//nearbyRewards.remove(bestRewardIndex);
+				goalCell.printCoords1();
+			}
 		}
 		
 		
@@ -764,7 +765,7 @@ import java.util.Stack;
  				-c.getCoordinates()[1]);
  	}
 
-	private int manhattanDistance(Cell c, Cell goalCell)  // goalCell could be either reward of the exit
+	private int manhattanDistance(Cell c, Cell goalCell)  // goalCell could be either reward or the exit
  	{
  		return Math.abs(goalCell.getCoordinates()[0]-c.getCoordinates()[0]) + Math.abs(goalCell.getCoordinates()[1]
  				-c.getCoordinates()[1]);
@@ -799,38 +800,37 @@ import java.util.Stack;
 	{
 		double maxVoD = -1.0;
 		int bestRewardPos = 0;
+		
+		int minManhattanD = bigNumber; // min and < 6
+		int minPosWithinFiveSteps = -1;  // position of the minManhattanD
+		boolean foundAwardWithinFiveSteps = false; 
+		
 		for (int i = 0;  i < rewards.size(); ++i)
-		{
-			double VoD = rewards.get(i).getValue() /  (manhattanDistance(c, rewards.get(i).getCell()) / 1.0);
+		{	
+			int manhattanD = manhattanDistance(c, rewards.get(i).getCell());
+			double VoD = rewards.get(i).getValue() /  (manhattanD / 1.0);
 //			System.out.println("Value: " + rewards.get(i).getValue() +  " ManahatDis: " +  manhattanDistance(c, rewards.get(i).getCell()) + " VoD " + i + " = " + VoD);
+			if (manhattanD <  6)  // go to rewards within 5 manhattanDistance unit, if there isn't any near by goal -> go for the goal with the best VoD value
+			{
+				if(manhattanD < minManhattanD)
+				{
+					minManhattanD = manhattanD;
+					minPosWithinFiveSteps = i;
+				}
+				foundAwardWithinFiveSteps = true;
+			}
 			if (VoD > maxVoD)
 			{
 				maxVoD = VoD;
 				bestRewardPos = i;
 			}
 		}
-		
-		return bestRewardPos;
+		if (foundAwardWithinFiveSteps)
+			return minPosWithinFiveSteps;
+		else
+			return bestRewardPos;
 	}
-	
-	private int bestNearbyRewardToVisit(Cell c)
-	{
-		double maxVoD = -1.0;
-		int bestRewardPos = 0;
-		for (int i = 0;  i < nearbyRewards.size(); ++i)
-		{
-			double VoD = nearbyRewards.get(i).getValue() /  (manhattanDistance(c, nearbyRewards.get(i).getCell()) / 1.0);
-//			System.out.println("Value: " + rewards.get(i).getValue() +  " ManahatDis: " +  manhattanDistance(c, rewards.get(i).getCell()) + " VoD " + i + " = " + VoD);
-			if (VoD > maxVoD)
-			{
-				maxVoD = VoD;
-				bestRewardPos = i;
-			}
-		}
-		
-		return bestRewardPos;
-	}
-	
+
 	private Cell getFarthestReward()
 	{
 		int maxDistance = 0;

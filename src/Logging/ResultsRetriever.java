@@ -1,4 +1,4 @@
-package Logging;
+package src.Logging;
 public class ResultsRetriever {
 
 	MySQLConnector c;

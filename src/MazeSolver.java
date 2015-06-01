@@ -1,9 +1,9 @@
-
+package src;
 import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import Logging.Log;
+//import src.Logging.Log;
 
 
 public class MazeSolver {
@@ -92,8 +92,8 @@ public class MazeSolver {
 					e.printStackTrace();
 				}
 			}
-			if(!debugRun)
-				Log.Log("Success", version, score);
+//			if(!debugRun)
+//				Log.Log("Success", version, score);
 			status = "Exit reached";
 			window.render(score, move, hardCap, status);
 			System.out.println("Solved!");
@@ -115,8 +115,8 @@ public class MazeSolver {
 				System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
 				window.render(score, move, hardCap, status);
 			}
-			if(!debugRun)
-				Log.Log("Failure", version, score);
+//			if(!debugRun)
+//				Log.Log("Failure", version, score);
 			
 		}
 		//catch (EmptyStackException e)
@@ -125,8 +125,8 @@ public class MazeSolver {
 		//}
 		catch(Exception e)
 		{
-			if(!debugRun)
-				Log.Log("Error", version, score);
+//			if(!debugRun)
+//				Log.Log("Error", version, score);
 			System.out.println("Error - Below is the State -");
 			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();
