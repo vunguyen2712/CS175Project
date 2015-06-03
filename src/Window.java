@@ -1,4 +1,9 @@
-
+/*
+ *  CS 175 Group 1
+ *  
+ *  Window is the main rendering class, it displays the state of the maze to the screen
+ *  
+ */
 import java.awt.*;
 import java.awt.image.*;
 

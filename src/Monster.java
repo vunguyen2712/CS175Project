@@ -1,4 +1,14 @@
 
+/*
+ * CS 175 Group 1
+ * 
+ * Monster.java symbolizes the monsters roaming around the maze
+ * 
+ * The monsters roam the maze randomly, by calculating where to move next each time within the "game loop"
+ * 
+ * 
+ */
+
 import java.util.Random;
 
 public class Monster extends Moveable{
@@ -13,6 +23,9 @@ public class Monster extends Moveable{
 		currentCell.moveCreatureIntoCell(this);
 	}
 	
+	
+	//Move takes the nextCell generated in calculateNextMove(), moves the monster into that cell
+	// Removes it from the cell that it currently is in, and saves that currentCell as the lastCell
 	@Override
 	public void move() {
 		//move out of currentCell
@@ -23,6 +36,8 @@ public class Monster extends Moveable{
 		currentCell = nextCell;
 	}
 
+	//To find out what cell to move to next, we look at all the neighbors of the current cell, and randomly
+	//		pick one
 	@Override
 	public Cell calculateNextMove() {
 		Random random = new Random();

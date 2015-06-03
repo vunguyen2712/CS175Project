@@ -1,3 +1,21 @@
+/*
+ * ICS 175 Group 1
+ * 
+ * Maze Solver is the main class for the AI. The process goes as follows -
+ * 1) Create the Maze
+ * 2) Initialize the score and the status
+ * 3) Display the state of the maze
+ * 4) while the agent has not reached the exit and while the move hard cap hasn't been reached - 
+ * 		- calculate where the monsters and the agent should move next
+ * 		- move them
+ * 		-detect if a major change occured (Agent caught, reward eaten, agent reaches exit)
+ * 		- display the new state of the maze
+ * 
+ * 5) record whether the agent has been caught or if it finished the maze, or if an error occured
+ */
+
+
+
 
 import java.util.EmptyStackException;
 import java.util.Scanner;
@@ -18,18 +36,23 @@ public class MazeSolver {
 	
 	public static void main(String[] args)
 	{
-		System.out.println(hardCap);
+		//System.out.println(hardCap);
+		
+		// Step 1
 		Maze maze = new Maze(mazeSize,mazeSize);
 		Window window = new Window(maze);
+		
+		// Step 2
 		int score = 0;
 		String status = "Collecting rewards";
 		//Scanner sc = new Scanner(System.in);
 		//sc.nextLine();
-
-		//Calculate the path to the exit
-
+		
+		// Step 3
 		window.render(score, 0, hardCap, status);
 		Agent agent = maze.getAgent();
+		
+		//Have the agent calculate its path to a goal
 		agent.calculatePathThroughMaze();
 		try {
 			if(!debugRun)
@@ -43,6 +66,8 @@ public class MazeSolver {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		
 		//Game loop, done is set to true when exit is reached
 		try
 		{
@@ -92,6 +117,8 @@ public class MazeSolver {
 					e.printStackTrace();
 				}
 			}
+			
+			//Logging section
 			if(!debugRun)
 				Log.Log("Success", version, score);
 			status = "Exit reached";

@@ -1,3 +1,13 @@
+/*
+ * CS 175 Group 1
+ * 
+ * Reward.java is the class which keeps track of the rewards in the maze. 
+ * Each reward houses the Cell that its in, and the integer value which symbolizes how much
+ * 		the reward is worth (its score)
+ * 
+ */
+
+
 
 public class Reward {
 
@@ -19,6 +29,12 @@ public class Reward {
 		return value;
 	}
 	
+	
+	/*
+	 * .equals() checks to see if the reward being checked is the same cell as the object its being compared
+	 *	with. I.E. if we compare a reward to an AStarCell, if they represent the same cell, then they are
+	 *	considered equal
+	*/
 	@Override
 	public boolean equals(Object o)
 	{
