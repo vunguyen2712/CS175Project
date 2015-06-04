@@ -8,7 +8,6 @@
  * 
  * 
  */
-
 import java.util.Random;
 
 public class Monster extends Moveable{

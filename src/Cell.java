@@ -1,3 +1,19 @@
+/*
+ * CS 175 Group 1
+ * 
+ * Cell class contrains information about each cell of the maze.
+ * 
+ * The most important aspects of the cell are the -
+ * 		-coordinates ((x,y) cords)
+ * 		-whether the cell is occupied by a Moveable object
+ * 			-And if occupied, what is it
+ * 		-whether the cell has a reward or not
+ * 			-And if it does, what is it
+ * 		-The neighboring cells (the cells that are able to be moved to from this cell)
+ * 
+ * Most methods of the class are either getter's or setter's
+ */
+
 
 import java.util.ArrayList;
 
