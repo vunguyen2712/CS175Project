@@ -1,9 +1,20 @@
+/*
+ * CS 175 Group 1
+ * 
+ * AStarCell is used in the Agent class both during the AStarSearch to find the next goal, as well as during
+ * 		monster avoidance to allow the agent to retrace its steps while avoiding the monster
+ * 
+ * What AStarCell comprises is the cell that it represenets, the "parent cell" (The cell that it was reached 
+ * 		from via the AStarPath) the heuristic (this represents both the heuristic applied to this cell 
+ * 		as well as the cost to traverse to this cell), and the path cost
+ */
+
 
 public class AStarCell {
 
 	private Cell cell;
 	private AStarCell parentCell;
-	//heuristic = cost to move to that cell  manhattan distance to the exit from that cell
+	//heuristic = cost to move to that cell  (manhattan distance to the exit from that cell)
 	private int heuristic;
 	//cost = cost to move to that cell along its path so far
 	private int cost;
@@ -40,6 +51,8 @@ public class AStarCell {
 		return cost;
 	}
 	
+	
+	//.equals() checks the coordinates of the object the AStarCell is being compared to
 	@Override
 	public boolean equals(Object o)
 	{

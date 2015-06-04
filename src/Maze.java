@@ -1,3 +1,15 @@
+/*
+ * CS 175 Group 1
+ * 
+ * A maze is a two dimensional Array of Cells. The maze object also keeps track of the entrance to the
+ * 		maze, the exit of the maze, the agent, the monsters, and the rewards. It also handles generating
+ * 		the maze.
+ * 
+ * To generate the maze - we call generateMaze(int width, int height), which then calls helper methods
+ * 		-for an explanation of the algorithm, see generateMaze(int, int)
+ */
+
+
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -54,6 +66,23 @@ public class Maze {
 		}*/
 	}
 	
+	
+	
+	/*
+	 * The Idea of generate maze is once we know the width and height of the maze, we 
+	 * 		1) generate a random side for the entrance to be placed and for the exit to be placed
+	 * 		2) generate a random offset on the side generated in step 1
+	 * 			-If the exit and entrance are the same location, repeat steps 1 & 2 until they're different
+	 * 		3) We then do a DFS starting at the entrance. To decide where to search next
+	 * 			-Choose a random cell next to the current cell  (a cell next to the current cell is 
+	 * 				a cell which |currentCellX - NextCellX| + |currentCellY - NextCellY| = 1)
+	 * 			-If that cell has been visited by the search already, add one to the amount of loops
+	 * 				-If the maximum amount of loops allowed in the maze has been reached, choose a new cell
+	 * 			- If the cell has not been visited, visit it, and those two cells become neighbors 
+	 * 				of eachother
+	 * 		4) Once all cells have been marked as visited by the DFS, randomly create locations for the 
+	 * 			monsters, as well as for the rewards
+	 */
 	private void generateMaze(int mazeWidth, int mazeHeight)
 	{
 		//Create a random number to determine which side of the maze the start location & end location are
@@ -286,7 +315,7 @@ public class Maze {
 
 		currentCell.setNeighbors(currentCell.getVisitedNeighbors());
 	}
-	
+
 	public void setMonsters(int mazeWidth, int mazeHeight)
 	{
 		int max;
