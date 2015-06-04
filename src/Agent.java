@@ -1,4 +1,29 @@
+/*
+ *  CS 175 Group 1
+  
+  Agent is the main AI class, it contains all information the agent needs to move throughout the maze,
+  as well as how to make intelligent decisions as to how to move about the maze.
+  
+  Important features it keeps track of - 
+  		-the current cell its in
+  		-the next cell it should move to
+  		-the path it should take to the curent goal
+  		-whether it needs to head to the exit (in order to avoid the hard cap)
+  		-an ideal path to the exit
+  		-also keeps track of what heuristic it is applying to decide which reward to head to 
+  
+  
+  Important Methods of the class - 
+  		-move() - moves the agent into nextCell
+  		-calculateNextMove() - decides what th nextCell should be, as well as handles monster avoidance
+  		-calculatePathThroughMaze() - does an A* search through the maze to find the current goal cell
+  		-recalculatePathThroughMaze() - does an A* search through the maze to find the current goal cell
+  		-calculatePathToExit() - does an A* search through the maze to find the ideal path to the exit
+  			(used for keeping track of when to head to the exit)
+  		-calculateBestGoal() - uses the reward heuristic to determine what the ideal reward to head to is
+  			(or if the agent needs to head to the exit due to it being close to the hard cap)
 
+ */
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Iterator;
@@ -94,6 +119,21 @@ import java.util.HashMap;
  		}
  	}
 	
+ 	/*
+ 	 * calculateNextMove() is responsible for figuring out where to head for the next move
+ 	 * 
+ 	 * It does this by 
+ 	 * 1)Checking if the agent needs to head to the exit 
+ 	 * 		(based on if the pathToExit + some leeway moves + move count >= the move hard cap)
+ 	 * 2) check if a monster is in the nextCell, or if a monster is in one of nextCell's neighbors 
+ 	 * 		(both of these scenarios could lead to the agent being captured)
+ 	 * 		-If so
+ 	 * 			a) calculatePathToExit to see if there is another path to the exit that doesn't have a much
+ 	 * 				higher cost
+ 	 * 			b) if the check in part 2 still is true, apply avoidence technique
+ 	 * 				-nextCell = currentCell.getParent()
+ 	 * 
+ 	 */
  	@Override	
 	public Cell calculateNextMove() 
 	throws EmptyStackException
@@ -104,19 +144,22 @@ import java.util.HashMap;
  		int pathToExit = pathToExit();
  		int timeLeft = MazeSolver.hardCap - MazeSolver.move;
  		
+ 		//------------------Check to see if agent needs to move to the exit------------------------------
  		if(timeLeft < pathToExit + MazeSolver.mazeSize && !headToExit)
  		{
  			System.out.println("time to head for the exit");
  			headToExit = true;
- 			recalculatePathThroughMaze();
+ 			calculatePathThroughMaze();
  		}
+ 		
+ 		
  		try
  		{
 			nextCell = path.pop();
 	 		Cell fallbackCell = nextCell.getCell();
  		try
  		{
- 			//Calculate if a monster is in one of the neighboring cells of nextCell
+//---------------------Calculate if a monster is in one of the neighboring cells of nextCell-----------
 		boolean monstersInNeighbors = calculateIfMonsterInNextCell(nextCell);
 		if(nextCell.getCell().hasMonster() || monstersInNeighbors)
 		{
@@ -124,7 +167,7 @@ import java.util.HashMap;
 	 		{
 				//aStarPath.pop();
 		
-				recalculatePathThroughMaze();
+				calculatePathThroughMaze();
 				recalculatedLastTime = true;
 				//System.out.println("recalculated");
 				
@@ -146,7 +189,7 @@ import java.util.HashMap;
 	 		else
 	 		{
 	 			recalculatedLastTime = false;
-	 			recalculatePathThroughMaze();
+	 			calculatePathThroughMaze();
 	 			
 	 			monstersInNeighbors = false;
 	 			/*if(nextCell.hasMonster() || monstersInNeighbors)
@@ -181,154 +224,35 @@ import java.util.HashMap;
  		//Reached a reward
  		catch (EmptyStackException e)
  		{
- 			recalculatePathThroughMaze();
+ 			calculatePathThroughMaze();
  			nextCell = path.pop();
  			return nextCell.getCell();
  		}
 	}
 	
+	
+	
 	public void calculatePathThroughMaze()
-	{
-		boolean pathFound = false;
-		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
-		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
+	{	
 		Cell goal = calculateBestGoal();
 		currentGoal = goal;
-		
-		//Initialize aStarFunction
-		
-		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
-		searchedCells.add(entrance);
-		
-		for(int i = 0; i < temp.size(); i++)
-		{
-			Cell tempCell = temp.get(i);
-			if(!searchedCells.contains(temp.get(i)))
-			{
-			int cost = calculateCellDistance(tempCell, goal);
-			
-			possibleCells.add(new AStarCell(tempCell, entrance , cost, 0));
-			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
-			}
-		}
-		//System.out.println(temp.size());
-		
-		//Find the "closest" neighbor
-		AStarCell min = possibleCells.get(0);
-		for(int i = 0; i < possibleCells.size(); i++)
-		{
-			int costForMin = min.getCost() + min.getHeuristic();
-			int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
-			if(costForTempCell < costForMin)
-			{
-				min = possibleCells.get(i);
-				//System.out.println("newMinInInit");
-			}
-		}
-		
-		//System.out.println(possibleCells.size());
-		searchedCells.add(min);
-		possibleCells.remove(min);
-		if(min.equals(goal))
-		{
-			pathFound = true;
-			AStarCell tempCell = min;
-			
-			//Trace back your steps, adding each step to the path stack
-			while(!tempCell.equals(entrance))
-			{
-			path.push(tempCell);
-			//aStarPath.push(tempCell);
-			
-			tempCell = tempCell.getParentCell();
-			}
-			path.push(entrance);
-		}
-		while(!pathFound)
-		{
-			//System.out.println(iteration);
-			//get the last cell added to searchedCells
-			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
-			
-			//Add that cell's neighbors to the possibleCellsList
-			
-			temp = mostRecentCell.getCell().getNeighbors();
-			//System.out.println("--------");
-			//System.out.println(temp.size());
-			
-			//repeat, as done in Initialization step
-			for(int i = 0; i < temp.size(); i++)
-			{
-				Cell tempCell = temp.get(i);
-				if(!searchedCells.contains(temp.get(i)))
-				{
-				int cost = calculateCellDistance(tempCell, goal);
-				
-				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
-				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
-				}
-			}
-			
-			//System.out.println(possibleCells.size());
-			
-			min = possibleCells.get(0);
-			for(int i = 0; i < possibleCells.size(); i++)
-			{
-				int costForMin = min.getCost() + min.getHeuristic();
-				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
-				if(costForTempCell < costForMin)
-				{
-					min = possibleCells.get(i);
-					//System.out.println("new min");
-				}
-				
-				//System.out.println(i);
-			}
-			
-			possibleCells.remove(min);
-			searchedCells.add(min);
-			
-			if(min.equals(goal))
-			{
-				//System.out.println("Found");
-				pathFound = true;
-				AStarCell tempCell = min;
-				
-				//Trace back your steps, adding each step to the path stack
-				while(!tempCell.equals(entrance))
-				{
-				path.push(tempCell);
-				//aStarPath.push(tempCell);
-				
-				tempCell = tempCell.getParentCell();
-				}
-				path.push(entrance);
-				//System.out.println("Path found!");
-			}
-			//System.out.println("Path NOT found! Keep Trying!");
-		}
-		path.pop();
-		//previousMoves.push(entrance.getCell());
-		
+		path = AStarSearch(goal);
 	}
 	
-	public void recalculatePathThroughMaze()
+	private void calculatePathToExit(Cell nextCell)
 	{
-		/*try{
-			System.out.println("Recalculating");
-			TimeUnit.MILLISECONDS.sleep(10000);
-		}
-		catch (Exception e)
+		if(!headToExit && !nextCell.equals(exit))
 		{
-			
-		}*/
-		
-		Cell goal = calculateBestGoal();
+			pathToExit = AStarSearch(exit);
+		}
+	}
+	
+	private Stack<AStarCell> AStarSearch(Cell goal)
+	{
 		boolean pathFound = false;
 		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
 		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
-		path = new Stack<AStarCell>();
-		currentGoal = goal;
+		Stack<AStarCell> tempPath = new Stack<AStarCell>();
 		
 		//Initialize aStarFunction
 		
@@ -376,7 +300,7 @@ import java.util.HashMap;
 			//Trace back your steps, adding each step to the path stack
 			while(!tempCell.equals(startingPoint))
 			{
-			path.push(tempCell);
+			tempPath.push(tempCell);
 			
 			//aStarPath.push(tempCell);
 			
@@ -437,7 +361,7 @@ import java.util.HashMap;
 				//Trace back your steps, adding each step to the path stack
 				while(!tempCell.equals(startingPoint))
 				{
-				path.push(tempCell);
+				tempPath.push(tempCell);
 				
 				//aStarPath.push(tempCell);
 				
@@ -448,138 +372,7 @@ import java.util.HashMap;
 			//System.out.println("Path NOT found! Keep Trying!");
 		}
 		
-	}
-	
-	private void calculatePathToExit(Cell nextCell)
-	{
-		if(!headToExit && !nextCell.equals(exit))
-		{
-	
-		//Cell goal = exit;
-		boolean pathFound = false;
-		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
-		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
-		pathToExit = new Stack<AStarCell>();
-		
-		
-		//Initialize aStarFunction
-		
-		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
-		AStarCell startingPoint = currentCell;
-		//aStarPath = new Stack<AStarCell>();
-		searchedCells.add(startingPoint);
-		
-		for(int i = 0; i < temp.size(); i++)
-		{
-			Cell tempCell = temp.get(i);
-			if(!searchedCells.contains(temp.get(i)))
-			{
-			int cost = calculateCellDistance(tempCell, exit);
-			
-			possibleCells.add(new AStarCell(tempCell, startingPoint , cost, 0));
-			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
-			}
-		}
-		//System.out.println(temp.size());
-		
-		//Find the "closest" neighbor
-		AStarCell min = possibleCells.get(0);
-		for(int i = 0; i < possibleCells.size(); i++)
-		{				
-		int costForMin = min.getCost() + min.getHeuristic();
-		int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
-		if(costForTempCell < costForMin)
-		{
-			min = possibleCells.get(i);
-				//System.out.println("newMinInInit");
-			}
-		}
-		
-		//System.out.println(possibleCells.size());
-		searchedCells.add(min);
-		possibleCells.remove(min);
-	
-		if(min.equals(exit))
-		{
-			//System.out.println("Found");
-			pathFound = true;
-			AStarCell tempCell = min;
-			
-			//Trace back your steps, adding each step to the path stack
-			while(!tempCell.equals(startingPoint))
-			{
-			pathToExit.push(tempCell);
-			
-			//aStarPath.push(tempCell);
-			
-			tempCell = tempCell.getParentCell();
-			}
-			//System.out.println("Path found!");
-		}
-		while(!pathFound)
-		{
-			//System.out.println(iteration);
-			//get the last cell added to searchedCells
-			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
-			
-			//Add that cell's neighbors to the possibleCellsList
-			
-			temp = mostRecentCell.getCell().getNeighbors();
-			//System.out.println("--------");
-			//System.out.println(temp.size());
-			
-			//repeat, as done in Initialization step
-			for(int i = 0; i < temp.size(); i++)
-			{
-				Cell tempCell = temp.get(i);
-				if(!searchedCells.contains(temp.get(i)))
-				{
-				int cost = calculateCellDistance(tempCell, exit);
-				
-				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
-				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
-				}
-			}
-			
-			//System.out.println(possibleCells.size());
-			
-			min = possibleCells.get(0);
-			for(int i = 0; i < possibleCells.size(); i++)
-			{
-				int costForMin = min.getCost() + min.getHeuristic();
-				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
-				if(costForTempCell < costForMin)
-				{
-					min = possibleCells.get(i);
-					//System.out.println("new min");
-				}
-				
-				//System.out.println(i);
-			}
-			
-			possibleCells.remove(min);
-			searchedCells.add(min);
-			
-			if(min.equals(exit))
-			{
-				//System.out.println("Found");
-				pathFound = true;
-				AStarCell tempCell = min;
-				
-				//Trace back your steps, adding each step to the path stack
-				while(!tempCell.equals(startingPoint))
-				{
-				pathToExit.push(tempCell);
-				
-				//aStarPath.push(tempCell);
-				
-				tempCell = tempCell.getParentCell();
-				}
-				//System.out.println("Path found!");
-			}
-			//System.out.println("Path NOT found! Keep Trying!");
-		}
-		}
+		return tempPath;
 	}
 	
 	private int calculateCellDistance(Cell c, Cell goal)
@@ -980,3 +773,403 @@ import java.util.HashMap;
  		nearbyRewards.remove(reward);
  	}
  }
+ 
+ 
+ 
+ //---------------------------------Legacy Code ------------------------------------------------------
+ /*public void calculatePathThroughMaze()
+	{
+		boolean pathFound = false;
+		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
+		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
+		Cell goal = calculateBestGoal();
+		currentGoal = goal;
+		
+		//Initialize aStarFunction
+		
+		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
+		searchedCells.add(entrance);
+		
+		for(int i = 0; i < temp.size(); i++)
+		{
+			Cell tempCell = temp.get(i);
+			if(!searchedCells.contains(temp.get(i)))
+			{
+			int cost = calculateCellDistance(tempCell, goal);
+			
+			possibleCells.add(new AStarCell(tempCell, entrance , cost, 0));
+			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+			}
+		}
+		//System.out.println(temp.size());
+		
+		//Find the "closest" neighbor
+		AStarCell min = possibleCells.get(0);
+		for(int i = 0; i < possibleCells.size(); i++)
+		{
+			int costForMin = min.getCost() + min.getHeuristic();
+			int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+			if(costForTempCell < costForMin)
+			{
+				min = possibleCells.get(i);
+				//System.out.println("newMinInInit");
+			}
+		}
+		
+		//System.out.println(possibleCells.size());
+		searchedCells.add(min);
+		possibleCells.remove(min);
+		if(min.equals(goal))
+		{
+			pathFound = true;
+			AStarCell tempCell = min;
+			
+			//Trace back your steps, adding each step to the path stack
+			while(!tempCell.equals(entrance))
+			{
+			path.push(tempCell);
+			//aStarPath.push(tempCell);
+			
+			tempCell = tempCell.getParentCell();
+			}
+			path.push(entrance);
+		}
+		while(!pathFound)
+		{
+			//System.out.println(iteration);
+			//get the last cell added to searchedCells
+			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
+			
+			//Add that cell's neighbors to the possibleCellsList
+			
+			temp = mostRecentCell.getCell().getNeighbors();
+			//System.out.println("--------");
+			//System.out.println(temp.size());
+			
+			//repeat, as done in Initialization step
+			for(int i = 0; i < temp.size(); i++)
+			{
+				Cell tempCell = temp.get(i);
+				if(!searchedCells.contains(temp.get(i)))
+				{
+				int cost = calculateCellDistance(tempCell, goal);
+				
+				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
+				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+				}
+			}
+			
+			//System.out.println(possibleCells.size());
+			
+			min = possibleCells.get(0);
+			for(int i = 0; i < possibleCells.size(); i++)
+			{
+				int costForMin = min.getCost() + min.getHeuristic();
+				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+				if(costForTempCell < costForMin)
+				{
+					min = possibleCells.get(i);
+					//System.out.println("new min");
+				}
+				
+				//System.out.println(i);
+			}
+			
+			possibleCells.remove(min);
+			searchedCells.add(min);
+			
+			if(min.equals(goal))
+			{
+				//System.out.println("Found");
+				pathFound = true;
+				AStarCell tempCell = min;
+				
+				//Trace back your steps, adding each step to the path stack
+				while(!tempCell.equals(entrance))
+				{
+				path.push(tempCell);
+				//aStarPath.push(tempCell);
+				
+				tempCell = tempCell.getParentCell();
+				}
+				path.push(entrance);
+				//System.out.println("Path found!");
+			}
+			//System.out.println("Path NOT found! Keep Trying!");
+		}
+		path.pop();
+		//previousMoves.push(entrance.getCell());
+		
+	}
+ public void calculatePathThroughMaze()
+	{
+		/*try{
+			System.out.println("Recalculating");
+			TimeUnit.MILLISECONDS.sleep(10000);
+		}
+		catch (Exception e)
+		{
+			
+		}
+		
+		Cell goal = calculateBestGoal();
+		currentGoal = goal;
+		path = AStarSearch(goal);
+		/*Cell goal = calculateBestGoal();
+		boolean pathFound = false;
+		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
+		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
+		path = new Stack<AStarCell>();
+		currentGoal = goal;
+		
+		//Initialize aStarFunction
+		
+		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
+		AStarCell startingPoint = currentCell;
+		//aStarPath = new Stack<AStarCell>();
+		searchedCells.add(startingPoint);
+		
+		for(int i = 0; i < temp.size(); i++)
+		{
+			Cell tempCell = temp.get(i);
+			if(!searchedCells.contains(temp.get(i)))
+			{
+			int cost = calculateCellDistance(tempCell, goal);
+			
+			possibleCells.add(new AStarCell(tempCell, startingPoint , cost, 0));
+			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+			}
+		}
+		//System.out.println(temp.size());
+		
+		//Find the "closest" neighbor
+		AStarCell min = possibleCells.get(0);
+		for(int i = 0; i < possibleCells.size(); i++)
+		{				
+		int costForMin = min.getCost() + min.getHeuristic();
+		int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+		if(costForTempCell < costForMin)
+		{
+			min = possibleCells.get(i);
+				//System.out.println("newMinInInit");
+			}
+		}
+		
+		//System.out.println(possibleCells.size());
+		searchedCells.add(min);
+		possibleCells.remove(min);
+
+		if(min.equals(goal))
+		{
+			//System.out.println("Found");
+			pathFound = true;
+			AStarCell tempCell = min;
+			
+			//Trace back your steps, adding each step to the path stack
+			while(!tempCell.equals(startingPoint))
+			{
+			path.push(tempCell);
+			
+			//aStarPath.push(tempCell);
+			
+			tempCell = tempCell.getParentCell();
+			}
+			//System.out.println("Path found!");
+		}
+		while(!pathFound)
+		{
+			//System.out.println(iteration);
+			//get the last cell added to searchedCells
+			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
+			
+			//Add that cell's neighbors to the possibleCellsList
+			
+			temp = mostRecentCell.getCell().getNeighbors();
+			//System.out.println("--------");
+			//System.out.println(temp.size());
+			
+			//repeat, as done in Initialization step
+			for(int i = 0; i < temp.size(); i++)
+			{
+				Cell tempCell = temp.get(i);
+				if(!searchedCells.contains(temp.get(i)))
+				{
+				int cost = calculateCellDistance(tempCell, goal);
+				
+				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
+				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+				}
+			}
+			
+			//System.out.println(possibleCells.size());
+			
+			min = possibleCells.get(0);
+			for(int i = 0; i < possibleCells.size(); i++)
+			{
+				int costForMin = min.getCost() + min.getHeuristic();
+				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+				if(costForTempCell < costForMin)
+				{
+					min = possibleCells.get(i);
+					//System.out.println("new min");
+				}
+				
+				//System.out.println(i);
+			}
+			
+			possibleCells.remove(min);
+			searchedCells.add(min);
+			
+			if(min.equals(goal))
+			{
+				//System.out.println("Found");
+				pathFound = true;
+				AStarCell tempCell = min;
+				
+				//Trace back your steps, adding each step to the path stack
+				while(!tempCell.equals(startingPoint))
+				{
+				path.push(tempCell);
+				
+				//aStarPath.push(tempCell);
+				
+				tempCell = tempCell.getParentCell();
+				}
+				//System.out.println("Path found!");
+			}
+			//System.out.println("Path NOT found! Keep Trying!");
+		}
+		
+	}
+	
+	private void calculatePathToExit(Cell nextCell)
+	{
+		if(!headToExit && !nextCell.equals(exit))
+		{
+			pathToExit = AStarSearch(exit);
+		/*Cell goal = exit;
+		boolean pathFound = false;
+		ArrayList<AStarCell> possibleCells = new ArrayList<AStarCell>();
+		ArrayList<AStarCell> searchedCells = new ArrayList<AStarCell>();
+		pathToExit = new Stack<AStarCell>();
+		
+		
+		//Initialize aStarFunction
+		
+		ArrayList<Cell> temp = currentCell.getCell().getNeighbors();
+		AStarCell startingPoint = currentCell;
+		//aStarPath = new Stack<AStarCell>();
+		searchedCells.add(startingPoint);
+		
+		for(int i = 0; i < temp.size(); i++)
+		{
+			Cell tempCell = temp.get(i);
+			if(!searchedCells.contains(temp.get(i)))
+			{
+			int cost = calculateCellDistance(tempCell, exit);
+			
+			possibleCells.add(new AStarCell(tempCell, startingPoint , cost, 0));
+			//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+			}
+		}
+		//System.out.println(temp.size());
+		
+		//Find the "closest" neighbor
+		AStarCell min = possibleCells.get(0);
+		for(int i = 0; i < possibleCells.size(); i++)
+		{				
+		int costForMin = min.getCost() + min.getHeuristic();
+		int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+		if(costForTempCell < costForMin)
+		{
+			min = possibleCells.get(i);
+				//System.out.println("newMinInInit");
+			}
+		}
+		
+		//System.out.println(possibleCells.size());
+		searchedCells.add(min);
+		possibleCells.remove(min);
+	
+		if(min.equals(exit))
+		{
+			//System.out.println("Found");
+			pathFound = true;
+			AStarCell tempCell = min;
+			
+			//Trace back your steps, adding each step to the path stack
+			while(!tempCell.equals(startingPoint))
+			{
+			pathToExit.push(tempCell);
+			
+			//aStarPath.push(tempCell);
+			
+			tempCell = tempCell.getParentCell();
+			}
+			//System.out.println("Path found!");
+		}
+		while(!pathFound)
+		{
+			//System.out.println(iteration);
+			//get the last cell added to searchedCells
+			AStarCell mostRecentCell = searchedCells.get(searchedCells.size() - 1);
+			
+			//Add that cell's neighbors to the possibleCellsList
+			
+			temp = mostRecentCell.getCell().getNeighbors();
+			//System.out.println("--------");
+			//System.out.println(temp.size());
+			
+			//repeat, as done in Initialization step
+			for(int i = 0; i < temp.size(); i++)
+			{
+				Cell tempCell = temp.get(i);
+				if(!searchedCells.contains(temp.get(i)))
+				{
+				int cost = calculateCellDistance(tempCell, exit);
+				
+				possibleCells.add(new AStarCell(tempCell, mostRecentCell , cost, mostRecentCell.getCost()+1));
+				//System.out.println("Added ("+ tempCell.getCoordinates()[0] + "," + tempCell.getCoordinates()[1] + ") - " + cost);
+				}
+			}
+			
+			//System.out.println(possibleCells.size());
+			
+			min = possibleCells.get(0);
+			for(int i = 0; i < possibleCells.size(); i++)
+			{
+				int costForMin = min.getCost() + min.getHeuristic();
+				int costForTempCell = possibleCells.get(i).getCost() + possibleCells.get(i).getHeuristic();
+				if(costForTempCell < costForMin)
+				{
+					min = possibleCells.get(i);
+					//System.out.println("new min");
+				}
+				
+				//System.out.println(i);
+			}
+			
+			possibleCells.remove(min);
+			searchedCells.add(min);
+			
+			if(min.equals(exit))
+			{
+				//System.out.println("Found");
+				pathFound = true;
+				AStarCell tempCell = min;
+				
+				//Trace back your steps, adding each step to the path stack
+				while(!tempCell.equals(startingPoint))
+				{
+				pathToExit.push(tempCell);
+				
+				//aStarPath.push(tempCell);
+				
+				tempCell = tempCell.getParentCell();
+				}
+				//System.out.println("Path found!");
+			}
+			//System.out.println("Path NOT found! Keep Trying!");
+		}
+		}
+	}*/
