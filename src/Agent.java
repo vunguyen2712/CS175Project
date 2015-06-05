@@ -230,8 +230,10 @@ import java.util.HashMap;
  		}
 	}
 	
-	
-	
+ 	/*
+ 	 * CalculatePathThroughMaze() First determines what the ideal goal to head towards based on the 
+ 	 * heuristic being applied. It then calculates the AStarPath to that goal from the currentCell
+ 	 */
 	public void calculatePathThroughMaze()
 	{	
 		Cell goal = calculateBestGoal();
@@ -239,6 +241,10 @@ import java.util.HashMap;
 		path = AStarSearch(goal);
 	}
 	
+ 	/*
+ 	 * CalculatePathToExit() calculates a path to the exit to help keep track of when we need to head to 
+ 	 * the exit (if we are heading to the exit, we don't need to calculate this)
+ 	 */
 	private void calculatePathToExit(Cell nextCell)
 	{
 		if(!headToExit && !nextCell.equals(exit))
@@ -247,6 +253,31 @@ import java.util.HashMap;
 		}
 	}
 	
+	/*
+	 * AStarSearch(Cell goal) takes the goal cell as input. From there, it maintains two lists,
+	 * possibleCells - the list of cells that we can possibly move to based on searchedCells
+	 * searchedCells - Cells that have been the minimum in possibleCells (i.e. could possibly be in our
+	 * 		final path
+	 * 
+	 * Once initialized, we follow the following algorithm
+	 * 
+	 * if(pathToGoalHasNotBeenFound)
+	 * 1)Take the Cell with the minimum value in possible (explained later) and add it to the searchedCells 
+	 * 		list
+	 * 2)for each neighbor of the cell just added to the searchdCells list
+	 * 		-calculate its value by adding its manhattan distance to the goal cell + the cost to move to 
+	 * 			that cell (the cost to move to a cell is constant, unless there is a monster in that cell,
+	 * 			in which case the cost is much larger in order to avoid cells with monsters, but not exclude 
+	 * 			them) 
+	 * 		-calculate the cost of the path to reach that Cell
+	 * 		-Create a new AStarCell with the recently calculated values
+	 * 		-add that AStarCell to the possibleCells list
+	 * 
+	 * 3)check if the goal has been reached
+	 * 
+	 * Once the goal has been reached - trace back your steps using AStarCell.getParent() to generate the 
+	 * 		final path
+	 */
 	private Stack<AStarCell> AStarSearch(Cell goal)
 	{
 		boolean pathFound = false;
