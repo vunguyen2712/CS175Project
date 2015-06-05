@@ -17,7 +17,8 @@
   		-move() - moves the agent into nextCell
   		-calculateNextMove() - decides what th nextCell should be, as well as handles monster avoidance
   		-calculatePathThroughMaze() - does an A* search through the maze to find the current goal cell
-  		-recalculatePathThroughMaze() - does an A* search through the maze to find the current goal cell
+  		-AStarSearch() - the actual AStar search function used by calculatePathThroughMaze() and 
+  				calculatePathToExit()
   		-calculatePathToExit() - does an A* search through the maze to find the ideal path to the exit
   			(used for keeping track of when to head to the exit)
   		-calculateBestGoal() - uses the reward heuristic to determine what the ideal reward to head to is
@@ -140,15 +141,10 @@ import java.util.HashMap;
 	{
 		//To detect if the agent will move to a cell with a monster on it, check if the nextCell has a 
 		//monster in it
-
- 		int pathToExit = pathToExit();
- 		int timeLeft = MazeSolver.hardCap - MazeSolver.move;
  		
  		//------------------Check to see if agent needs to move to the exit------------------------------
- 		if(timeLeft < pathToExit + MazeSolver.mazeSize && !headToExit)
+ 		if(calculateHeadToExit())
  		{
- 			System.out.println("time to head for the exit");
- 			headToExit = true;
  			calculatePathThroughMaze();
  		}
  		
@@ -406,6 +402,22 @@ import java.util.HashMap;
 		return tempPath;
 	}
 	
+	private boolean calculateHeadToExit()
+	{
+		
+ 		int pathToExit = pathToExit();
+ 		int timeLeft = MazeSolver.hardCap - MazeSolver.move;
+ 		
+ 		//------------------Check to see if agent needs to move to the exit------------------------------
+ 		if(timeLeft < pathToExit + manhattanDistance(exit) && !headToExit)
+ 		{
+ 			System.out.println("time to head for the exit");
+ 			headToExit = true;
+ 		}
+ 		return headToExit;
+	}
+	
+	
 	private int calculateCellDistance(Cell c, Cell goal)
 	{
 		int pathCost = cellCost;
@@ -424,7 +436,7 @@ import java.util.HashMap;
 		return pathCost + heuristic;
 	}
 	
-/* calculateGoal() returns the closest reward (Cell)
+/* calculateGoal() returns the best reward (Cell) as given by our heuristic
  * 
  */
 	private Cell calculateGoal()
@@ -597,7 +609,19 @@ import java.util.HashMap;
 
 	private int pathToExit()
 	{
-		return pathToExit.size();
+		int size = pathToExit.size();
+		int monsterCount= 0;
+		for (int i = 0; i<size; i++)
+		{
+			AStarCell element = pathToExit.get(i);
+			if(element.getCell().hasMonster())
+			{
+				monsterCount++;
+			}
+		}
+		
+		int finalNum = size + (monsterCount * 5);
+		return finalNum;
 	}
 	
 /*	rewardToVisit(Cell c) function returns the index of the closest reward
@@ -728,9 +752,21 @@ import java.util.HashMap;
  */
  	private void calculateMoveWhenMonsterInFront()
  	{
+ 		//Options, move back, move forward, stay put, move to a neighbor that would be safe
 		if(!currentCell.equals(entrance))
 		{
-		nextCell = currentCell.getParentCell();
+			nextCell = currentCell.getParentCell();
+			//Check if a monster could be behind us
+			if(calculateIfMonsterInNextCell(nextCell))
+			{
+				//This would mean moving back would kill us. we now need to know if its better to stay put
+				//or try to move to a neighbor
+				if(nextCell.getCell().hasMonster())
+				{
+					//Monster could come into our cell
+					
+				}
+			}
 		path.push(currentCell);
 		recalculatedLastTime = true;
 		

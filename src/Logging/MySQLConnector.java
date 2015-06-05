@@ -1,3 +1,7 @@
+/*
+ * MySQLConnector is simply a class to connect java to MYSQL, it is not important to the AI, so I will
+ * 		not go in depth explaning it.
+ */
 package Logging;
 
 import java.io.BufferedReader;

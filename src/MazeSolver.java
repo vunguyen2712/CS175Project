@@ -25,8 +25,8 @@ import Logging.Log;
 public class MazeSolver {
 
 	public static boolean done = false;
-	private static boolean debugRun = true;
-	static String version = "1.11";
+	private static boolean debugRun = false;
+	static String version = "1.13";
 
 	public static int mazeSize = 15;
 	public static int hardCap = mazeSize * 10;
@@ -54,7 +54,7 @@ public class MazeSolver {
 		agent.calculatePathThroughMaze();
 		try {
 			if(!debugRun)
-			{TimeUnit.MILLISECONDS.sleep(00);
+			{TimeUnit.MILLISECONDS.sleep(300);
 			}
 			else
 			{
@@ -104,7 +104,7 @@ public class MazeSolver {
 				*/
 				try {
 					if(!debugRun)
-					{TimeUnit.MILLISECONDS.sleep(00);
+					{TimeUnit.MILLISECONDS.sleep(300);
 					}
 					else
 					{
@@ -140,18 +140,18 @@ public class MazeSolver {
 				System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
 				window.render(score, move, hardCap, status);
 			}
-//			if(!debugRun)
-//				Log.Log("Failure", version, score);
+			if(!debugRun)
+				Log.Log("Failure", version, score);
 			
 		}
-		//catch (EmptyStackException e)
-		//{
-			//System.out.println("Monster blocking the way outside of the entrance");
-		//}
+		catch (EmptyStackException e)
+		{
+			System.out.println("Monster blocking the way outside of the entrance");
+		}
 		catch(Exception e)
 		{
-//			if(!debugRun)
-//				Log.Log("Error", version, score);
+			if(!debugRun)
+				Log.Log("Error", version, score);
 			System.out.println("Error - Below is the State -");
 			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();

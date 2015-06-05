@@ -1,3 +1,22 @@
+/*
+ * The log package is responsible for logging the results of the maze solver each time its run
+ * 
+ * 
+ * The dependencies are - 
+ * 		-mysql must be installed
+ * 		-there must be a cs175 data base with the following table 
+ * 			-results(version VARCHAR(20), result VARCHAR(255), date VARCHAR(255), score INT)
+ * 		-JDBC must also be installed
+ * 
+ * 
+ * ALTERNATIVELY - 
+ * 		-If the system can't access the database, all results will be placed and fetched from Errors.txt 
+ * 			instead
+ *
+ *	Be aware - the results you see from ResultsRetriever.java may be different from the ones presented in
+ *		class due to much of our results being housed in Brian's local mysql database
+ */
+
 package Logging;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -17,8 +36,8 @@ public class Log {
 	public static void Log(String result, String version, int score)
 	{
 		//Username/password to the database are admin's of your database, could be root and password
-		String username = "testuser";
-		String password = "testpassword";
+		String username = "test";
+		String password = "test";
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		   //get current date time with Date()
