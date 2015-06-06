@@ -26,7 +26,7 @@ public class MazeSolver {
 
 	public static boolean done = false;
 	private static boolean debugRun = false;
-	static String version = "1.14";
+	static String version = "1.16";
 
 	public static int mazeSize = 15;
 	public static int hardCap = mazeSize * 10;
@@ -54,7 +54,7 @@ public class MazeSolver {
 		agent.calculatePathThroughMaze();
 		try {
 			if(!debugRun)
-			{TimeUnit.MILLISECONDS.sleep(300);
+			{TimeUnit.MILLISECONDS.sleep(200);
 			}
 			else
 			{
@@ -69,8 +69,8 @@ public class MazeSolver {
 		//Game loop, done is set to true when exit is reached
 		try
 		{
-			while(!done && (move <= hardCap))
-			//while(!done)
+			//while(!done && (move <= hardCap))
+			while(!done)
 			{
 				//Calculate where to go next
 				maze.calculateNextMove();
@@ -89,10 +89,10 @@ public class MazeSolver {
 					agent.collectReward(temp.getCell());
 				}
 				move++;
-				if(move > hardCap)
-				{
-					throw new CaughtException("Cap");
-				}
+				//if(move > hardCap)
+				//{
+					//throw new CaughtException("Cap");
+				//}
 				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 				//agent.printStack();
 				//agent.printnextMoves();
@@ -104,7 +104,7 @@ public class MazeSolver {
 				*/
 				try {
 					if(!debugRun)
-					{TimeUnit.MILLISECONDS.sleep(300);
+					{TimeUnit.MILLISECONDS.sleep(200);
 					}
 					else
 					{
@@ -136,8 +136,6 @@ public class MazeSolver {
 			{
 				status = "Caught";
 				System.out.println("Agent was caught!");
-				System.out.println("At position - (" + agent.getX() + "," + agent.getY() + ")");
-				System.out.println("( " + agent.getLastCell().getCoordinates()[0] + ", " + agent.getLastCell().getCoordinates()[1] + ")");
 				window.render(score, move, hardCap, status);
 			}
 			if(!debugRun)
@@ -153,13 +151,11 @@ public class MazeSolver {
 			if(!debugRun)
 				Log.Log("Error", version, score);
 			System.out.println("Error - Below is the State -");
-			System.out.println("Agent Position - (" + agent.getX() + "," + agent.getY() + ")");
 			maze.printMonsterPositions();
 			agent.printStack();
 			agent.printnextMoves();
 			System.out.println(e.getClass());
 			e.printStackTrace();
 		}
-		
 	}
 }

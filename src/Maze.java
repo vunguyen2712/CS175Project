@@ -372,6 +372,7 @@ public class Maze {
 			
 			int randomX = random.nextInt(mazeWidth);
 			int randomY = random.nextInt(mazeHeight);
+			int value;
 			Cell rewardCell = maze[randomX][randomY];
 			
 			while(rewardCell.equals(entrance) || rewardCell.equals(exit) || rewardCell.hasReward())
@@ -380,8 +381,22 @@ public class Maze {
 				randomY = random.nextInt(mazeHeight);
 				rewardCell = maze[randomX][randomY];
 			}
-			int value = random.nextInt(5) + 1;
-			value = value * 100;
+			if(i < 1)
+			{
+				value = 500;
+			}
+			else if(i < 3)
+			{
+				value = 400;
+			}
+			else if(i < 5)
+			{
+				value = 300;
+			}
+			else
+			{
+				value = 100;
+			}
 			Reward temp = new Reward(rewardCell, value);
 			rewards.add(temp);
 			maze[randomX][randomY].setReward(temp);

@@ -159,7 +159,7 @@ import java.util.HashMap;
  		try
  		{
 //---------------------Calculate if a monster is in one of the neighboring cells of nextCell-----------
-		boolean monstersInNeighbors = calculateIfMonsterInNextCell(nextCell.getCell());
+		boolean monstersInNeighbors = calculateIfMonsterInNeighbors(nextCell.getCell());
 		if(nextCell.getCell().hasMonster() || monstersInNeighbors)
 		{
 	 		if(!recalculatedLastTime)
@@ -170,7 +170,7 @@ import java.util.HashMap;
 				recalculatedLastTime = true;
 				//System.out.println("recalculated");
 				
-				monstersInNeighbors = calculateIfMonsterInNextCell(nextCell.getCell());
+				monstersInNeighbors = calculateIfMonsterInNeighbors(nextCell.getCell());
 				//Path would still lead to agent being caught
 				if(nextCell.getCell().hasMonster() || monstersInNeighbors || nextCell.equals(fallbackCell))
 				{
@@ -198,7 +198,7 @@ import java.util.HashMap;
 	 				System.out.println("recalculated");
 	 			}*/
 	 			
-	 			monstersInNeighbors = calculateIfMonsterInNextCell(nextCell.getCell());
+	 			monstersInNeighbors = calculateIfMonsterInNeighbors(nextCell.getCell());
 	 			
 	 			if(nextCell.getCell().hasMonster() || monstersInNeighbors)
 	 			{
@@ -412,7 +412,7 @@ import java.util.HashMap;
  		int timeLeft = MazeSolver.hardCap - MazeSolver.move;
  		
  		//------------------Check to see if agent needs to move to the exit------------------------------
- 		if(timeLeft < pathToExit + manhattanDistance(exit) + 5 && !headToExit)
+ 		if(timeLeft < (pathToExit + manhattanDistance(exit)) *2 && !headToExit)
  		{
  			System.out.println("time to head for the exit");
  			headToExit = true;
@@ -762,11 +762,18 @@ import java.util.HashMap;
 		if(!currentCell.equals(entrance))
 		{
 			nextCell = currentCell.getParentCell();
-			//Check if a monster could be behind us
-			if(calculateIfMonsterInNextCell(nextCell.getCell()))
+			//first check if we should sit still
+			if(!calculateIfMonsterInNeighbors(currentCell.getCell()))
 			{
-				//This would mean moving back would kill us. we now need to know if its better to stay put
-				//or try to move to a neighbor
+				//monster won't come into our cell
+				nextCell = currentCell;
+				safeCellFound = true;
+			}
+			//Next, check if we are able to move to our parent cell
+			else if(calculateIfMonsterInNeighbors(nextCell.getCell()))
+			{
+				//This would mean moving back would kill us. we now need to know if its better to try
+				//to move to a neighbor
 				if(nextCell.getCell().hasMonster()|| originalNextCell.getCell().hasMonster())
 				{
 					//Monster could come into our cell
@@ -779,23 +786,20 @@ import java.util.HashMap;
 						//this cell is free & clear
 							nextCell = new AStarCell(c, currentCell, 0, 0);
 							safeCellFound = true;
+
+							System.out.println("hiding spot - " + nextCell.getCell().printCoords());
 						}
 					}
-					if(!safeCellFound)
-					{
-						//if we didn't find a safe place to hide, we have to take the risk of moving to
-						//our original cell, otherwise, we would be caught guarenteed. This case, if the
-						//monster blocking our original path moves to any cell besides our current cell,
-						//we at least move forward along our precalculated ideal path
-						
-						nextCell = originalNextCell;
-						safeCellFound = true;
-					}
+					
 				}
-				else
+				if(!safeCellFound)
 				{
-					//monster won't come into our cell
-					nextCell = currentCell;
+					//if we didn't find a safe place to hide, we have to take the risk of moving to
+					//our original cell, otherwise, we would be caught guarenteed. This case, if the
+					//monster blocking our original path moves to any cell besides our current cell,
+					//we at least move forward along our precalculated ideal path
+					
+					nextCell = originalNextCell;
 					safeCellFound = true;
 				}
 			}
@@ -817,11 +821,12 @@ import java.util.HashMap;
 				for(Cell c: currentCell.getCell().getNeighbors())
 				{
 					//Check if there's any nearby corridors we could duck into
-					if(!c.hasMonster() && !calculateIfMonsterInNextCell(c) && !safeCellFound)
+					if(!c.hasMonster() && !calculateIfMonsterInNeighbors(c) && !safeCellFound)
 					{
 					//this cell is free & clear
 						nextCell = new AStarCell(c, currentCell, 0, 0);
 						safeCellFound = true;
+						System.out.println("hiding spot - " + nextCell.getCell().printCoords());
 					}
 				}
 				if(!safeCellFound)
@@ -843,7 +848,7 @@ import java.util.HashMap;
 		}
  	}
  	
- 	private boolean calculateIfMonsterInNextCell(Cell nextCell)
+ 	private boolean calculateIfMonsterInNeighbors(Cell nextCell)
  	{
  		boolean monstersInNeighbors = false;
 			for (int i = 0; i < nextCell.getNeighbors().size(); i++)
