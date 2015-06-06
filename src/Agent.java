@@ -459,6 +459,7 @@ import java.util.HashMap;
 		else
 		{
 			//System.out.println("goal cell = exit");
+			headToExit = true;
 			goalCell = exit;
 		}
 		return goalCell;
@@ -478,18 +479,19 @@ import java.util.HashMap;
 		Cell goalCell = exit;
 		if(heuristic.equals("VoD"))
 		{
-		if(rewards.size() > 0 && !headToExit)
-		//if(rewards.size() > 0)
-		{
-			int bestRewardIndex = bestRewardToVisit(c);
-			goalCell = rewards.get(bestRewardIndex).getCell();
-			System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
-		}
-		else
-		{
-			//System.out.println("goal cell = exit");
-			goalCell = exit;
-		}
+			if(rewards.size() > 0 && !headToExit)
+			//if(rewards.size() > 0)
+			{
+				int bestRewardIndex = bestRewardToVisit(c);
+				goalCell = rewards.get(bestRewardIndex).getCell();
+				System.out.println("goal Cell = (" + goalCell.getCoordinates()[0] + "," + goalCell.getCoordinates()[1]+")");
+			}
+			else
+			{
+				//System.out.println("goal cell = exit");
+				headToExit = true;
+				goalCell = exit;
+			}
 		}
 		
 		
@@ -908,6 +910,10 @@ import java.util.HashMap;
  	public void caught(){
  		currentCell.getCell().moveCreatureOutOfCell(this);
  		currentCell = new AStarCell(lastMove, currentCell, 0, 0);
+ 	}
+ 	
+ 	public Cell getCurrentGoal(){
+ 		return currentGoal;
  	}
  
  	public void removeReward(Reward reward)

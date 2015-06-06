@@ -267,7 +267,7 @@ public class Maze {
 	}
 	
 	
-	//Does a DFS of the maze, starting at the entrace
+	//Does a DFS of the maze, starting at the entrance
 	/*
 	 * 1) Starting at the entrance, pick a neighbor that has not been visited yet
 	 * 2) Mark that neighbor as visited
@@ -471,22 +471,22 @@ public class Maze {
 			int recalTimes = 0;  // used to check for trap
 			while (monstersCollision(movedToCell,i))
 			{
-				movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random postion
+				movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random position
 				++ recalTimes;
 				//System.out.println("monster collision");
 				if (recalTimes > 3) // if encounter a trap
 				{
-					// recalculate next postion for all monsters
+					// recalculate next position for all monsters
 					for (int j = 0; j < i; ++j)
 					{
 						monsters.get(j).calculateNextMove();
 					}
-					movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random postion
+					movedToCell = monsters.get(i).calculateNextMove(); // recalculate the next random position
 					recalTimes = 0;
 					//System.out.println("recalculated all next move for monsters!");
 				}
 			}
-			//System.out.println("monster new postion!");
+			//System.out.println("monster new position!");
 		}
 	}
 	
@@ -518,7 +518,7 @@ public class Maze {
 			{
 				throw new CaughtException("Caught");
 			}
-			//The agent and the monster moved past eachother in the "hallway
+			//The agent and the monster moved past each other in the "hallway
 			else if(m.getLastCell().equals(agent.getCurrentCell())
 					&& m.getCurrentCell().equals(agent.getLastCell()))
 			{

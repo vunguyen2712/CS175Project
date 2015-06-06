@@ -58,7 +58,7 @@ public class Window {
 			g2d.setColor(Color.BLACK);
 			g2d.drawString("Moves: " + moves+"/"+cap, 0, 10);
 			g2d.drawString("Score: " + score, 0, 23);
-			g2d.drawString("Agent status: " + status, 330, 15);
+			g2d.drawString("Agent status: " + status, 220, 15);
 			for(int i = 0; i < width; i++){
 	        	for(int j = 0; j < height; j++){
 	        		Cell c = maze.getMaze()[j][i];
@@ -82,14 +82,14 @@ public class Window {
 	        		if(c.isOccupied())
 	        		{
 	        			if(c.getCreature() instanceof Agent){
-	        				
+	        				/*
 	        				g2d.setColor(new Color(0xc1c0c0));
 	        				Cell m = maze.getAgent().getNextCell();
 	        				g2d.drawRect((m.getCoordinates()[0]+1)*cellSize+2, (m.getCoordinates()[1]+1)*cellSize+2, cellSize-4, cellSize-4);
 	        				for(Cell n : maze.getAgent().getNextCell().getNeighbors()){
 	    	        			g2d.drawRect((n.getCoordinates()[0]+1)*cellSize+2, (n.getCoordinates()[1]+1)*cellSize+2, cellSize-4, cellSize-4);
 	    	        		}
-	    	        		
+	    	        		*/
 	        				g2d.setColor(Color.YELLOW);
 	        			}
 	        			else if(c.getCreature() instanceof Monster){

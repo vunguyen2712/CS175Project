@@ -1,18 +1,17 @@
 
 /*
- * ICS 175 Group 1
+ * CS 175 Group 1
  * 
  * Maze Solver is the main class for the AI. The process goes as follows -
  * 1) Create the Maze
- * 2) Initialize the score and the status
- * 3) Display the state of the maze
- * 4) while the agent has not reached the exit and while the move hard cap hasn't been reached - 
+ * 2) Display the initial state of the maze
+ * 3) while the agent has not reached the exit and while the move hard cap hasn't been reached - 
  * 		- calculate where the monsters and the agent should move next
  * 		- move them
- * 		-detect if a major change occured (Agent caught, reward eaten, agent reaches exit)
+ * 		- detect if a major change occurred (Agent caught, reward eaten, agent reaches exit)
  * 		- display the new state of the maze
  * 
- * 5) record whether the agent has been caught or if it finished the maze, or if an error occured
+ * 4) Record whether the agent has been caught or if it finished the maze, or if an error occurred
  */
 
 import java.util.EmptyStackException;
@@ -36,29 +35,27 @@ public class MazeSolver {
 	{
 		//System.out.println(hardCap);
 		
-		// Step 1
+		//Step 1 - Creating the maze
 		Maze maze = new Maze(mazeSize,mazeSize);
 		Window window = new Window(maze);
-		
-		// Step 2
-		int score = 0;
-		String status = "Collecting rewards";
+		Agent agent = maze.getAgent();
 		//Scanner sc = new Scanner(System.in);
 		//sc.nextLine();
 		
-		// Step 3
+		//Step 2 - Display initial state
+		int score = 0;
+		String status = "";
 		window.render(score, 0, hardCap, status);
-		Agent agent = maze.getAgent();
 		
 		//Have the agent calculate its path to a goal
 		agent.calculatePathThroughMaze();
 		try {
 			if(!debugRun)
-			{TimeUnit.MILLISECONDS.sleep(200);
+			{
+				TimeUnit.MILLISECONDS.sleep(200);
 			}
 			else
 			{
-
 				TimeUnit.MILLISECONDS.sleep(400);
 			}
 		} catch (InterruptedException e) {
@@ -66,7 +63,7 @@ public class MazeSolver {
 		}
 		
 		
-		//Game loop, done is set to true when exit is reached
+		//Step 3 - Game loop, done is set to true when exit is reached
 		try
 		{
 			//while(!done && (move <= hardCap))
@@ -76,6 +73,9 @@ public class MazeSolver {
 				maze.calculateNextMove();
 				if(agent.getHeadToExit())
 					status = "Heading toward exit";
+				else
+					status = "Heading to collect reward at (" + agent.getCurrentGoal().getCoordinates()[0]+", "
+						+ agent.getCurrentGoal().getCoordinates()[1]+") with value "+ agent.getCurrentGoal().getReward().getValue();
 				//Move
 				maze.moveAll();
 				//Display
@@ -96,12 +96,6 @@ public class MazeSolver {
 				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 				//agent.printStack();
 				//agent.printnextMoves();
-				/* prints monster coordinates
-				for(int i = 0; i < maze.getMonsters().size(); i++){
-					System.out.print(maze.getMonsters().get(i).getCurrentCell().printCoords());
-				}
-				System.out.println();
-				*/
 				try {
 					if(!debugRun)
 					{TimeUnit.MILLISECONDS.sleep(200);
@@ -115,7 +109,7 @@ public class MazeSolver {
 					e.printStackTrace();
 				}
 			}
-			//Logging section
+			//Step 4 - Logging section
 			if(!debugRun)
 				Log.Log("Success", version, score);
 
