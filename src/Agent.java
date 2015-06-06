@@ -774,8 +774,6 @@ import java.util.HashMap;
 			{
 				//This would mean moving back would kill us. we now need to know if its better to try
 				//to move to a neighbor
-				if(nextCell.getCell().hasMonster()|| originalNextCell.getCell().hasMonster())
-				{
 					//Monster could come into our cell
 					for(Cell c: currentCell.getCell().getNeighbors())
 					{
@@ -791,7 +789,6 @@ import java.util.HashMap;
 						}
 					}
 					
-				}
 				if(!safeCellFound)
 				{
 					//if we didn't find a safe place to hide, we have to take the risk of moving to
