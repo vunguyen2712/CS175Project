@@ -26,7 +26,7 @@ public class MazeSolver {
 
 	public static boolean done = false;
 	private static boolean debugRun = false;
-	static String version = "1.13";
+	static String version = "1.14";
 
 	public static int mazeSize = 15;
 	public static int hardCap = mazeSize * 10;
