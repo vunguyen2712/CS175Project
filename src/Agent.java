@@ -46,7 +46,7 @@ import java.util.HashMap;
 	private int cellCost = 5;
 	private AStarCell entrance;
 	private Cell currentGoal;
-	private Cell nearestReward;
+	//private Cell nearestReward;
 	private boolean headToExit;
 	private Stack<AStarCell> pathToExit;
 	private boolean pathCalculated;
@@ -79,7 +79,7 @@ import java.util.HashMap;
 		this.entrance = new AStarCell(entrance, null, 0, 0);
 		currentCell = this.entrance;
 		currentGoal = exit;
-		nearestReward = calculateGoal();
+		//nearestReward = calculateGoal();
 		headToExit = false;
 		
 		pathToExit = new Stack<AStarCell>();

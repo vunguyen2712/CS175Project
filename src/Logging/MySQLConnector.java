@@ -102,7 +102,7 @@ public class MySQLConnector {
 			    br.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Could not find file");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -112,8 +112,65 @@ public class MySQLConnector {
 			System.out.println("Version Number: 1." + i + "   Success: " + numberOfSuccess + "    Total Runs : "
 					+ totalRuns + "     Percentage of Success: " + percent + "%" + "    Avg Score: " + avgScore);
 			System.out.println("--------------------------------");
-			
+		}
 		}
 		
+		public static void printFromText(int version)
+		{
+			for(int i = startVersion; i <= version; i++)
+			{
+				int numberOfSuccess =0;
+				int totalRuns =0;
+				String versionNumber = "1." + i;
+
+				int totalScore = 0;
+				double avgScore = 0.0;
+				
+				String file = "Errors.txt";
+				BufferedReader br;
+
+				try {
+					br = new BufferedReader(new FileReader(file));
+				    String line;
+				    while ((line = br.readLine()) != null) {
+				       String[] split = line.split(" ");
+				       String res = split[3];
+				       String vers = split[0];
+				       String score;
+				       if(split.length == 5)
+				       {
+				       score = split[4];
+				       }
+				       else
+				       {
+				    	   score = "0";
+				       }
+				       if(vers.equals(versionNumber))
+				       {
+				       totalRuns++;
+				       if (res.equals("Success"))
+				       {
+				    	   numberOfSuccess++;
+				    	   totalScore = totalScore + Integer.parseInt(score);
+				       }
+				 
+				       }
+				    }
+				    br.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+
+					System.out.println("Could not find file");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				int percent = (numberOfSuccess * 100) / totalRuns;
+				avgScore = totalScore/numberOfSuccess;
+				System.out.println("Version Number: 1." + i + "   Success: " + numberOfSuccess + "    Total Runs : "
+						+ totalRuns + "     Percentage of Success: " + percent + "%" + "    Avg Score: " + avgScore);
+				System.out.println("--------------------------------");
+		}
 	}
+	
 }

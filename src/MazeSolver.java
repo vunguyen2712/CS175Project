@@ -15,7 +15,6 @@
  */
 
 import java.util.EmptyStackException;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import Logging.Log;
@@ -25,7 +24,7 @@ public class MazeSolver {
 
 	public static boolean done = false;
 	private static boolean debugRun = false;
-	static String version = "1.16";
+	static String version = "1.14";
 
 	public static int mazeSize = 15;
 	public static int hardCap = mazeSize * 10;
@@ -89,16 +88,16 @@ public class MazeSolver {
 					agent.collectReward(temp.getCell());
 				}
 				move++;
-				//if(move > hardCap)
-				//{
-					//throw new CaughtException("Cap");
-				//}
+				if(move > hardCap)
+				{
+					throw new CaughtException("Cap");
+				}
 				//System.out.println("(" + agent.getX() + "," + agent.getY() + ")");
 				//agent.printStack();
 				//agent.printnextMoves();
 				try {
 					if(!debugRun)
-					{TimeUnit.MILLISECONDS.sleep(200);
+					{TimeUnit.MILLISECONDS.sleep(00);
 					}
 					else
 					{
@@ -151,5 +150,7 @@ public class MazeSolver {
 			System.out.println(e.getClass());
 			e.printStackTrace();
 		}
+		System.exit(0);
 	}
+	
 }

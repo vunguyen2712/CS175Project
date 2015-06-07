@@ -2,3 +2,5 @@ V1.8 - closest neighbor
 V1.9 - VoD
 V1.10 - Clustering
 V1.11 - farthest reward
+V1.12 - VoD combined with Clustering
+V1.13 - VoD combined with Clustering - with additional avoidance AI as well as 

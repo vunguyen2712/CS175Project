@@ -14,6 +14,12 @@
  */
 
 package Logging;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class ResultsRetriever {
 
 	MySQLConnector c;
@@ -21,7 +27,7 @@ public class ResultsRetriever {
 	{
 		String username = "testuser";
 		String password = "testpassword";
-		int versionNumber = 16;
+		int versionNumber = 14;
 		try
 		{
 		MySQLConnector c = new MySQLConnector(username,password);
@@ -29,8 +35,7 @@ public class ResultsRetriever {
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			System.out.println("Error, please try again");
+			MySQLConnector.printFromText(versionNumber);
 		}
 		
 	}
